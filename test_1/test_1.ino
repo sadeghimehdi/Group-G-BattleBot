@@ -32,7 +32,7 @@ uint16_t sensorValues[SensorCount];
  ****************************************************************************/
 
 // Which pin on the Arduino is connected to the NeoPixels?
-#define NEOPIN        9 // On Trinket or Gemma, suggest changing this to 1
+#define NEOPIN        10 // On Trinket or Gemma, suggest changing this to 1
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS 4 // Popular NeoPixel ring size
@@ -54,7 +54,7 @@ const int echoPin = 7; // Echo Pin of Ultrasonic Sensor
  ****************************************************************************/
 
 const int motorLeftBack = 3; // Trigger Pin of Ultrasonic Sensor
-const int motorLeftForward = 10; // Trigger Pin of Ultrasonic Sensor
+const int motorLeftForward = 9; // Trigger Pin of Ultrasonic Sensor
 const int motorRightBack = 5; // Trigger Pin of Ultrasonic Sensor
 const int motorRightForward = 6; // Trigger Pin of Ultrasonic Sensor
 int lastSensor = NULL;
