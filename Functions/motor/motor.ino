@@ -2,7 +2,7 @@ const int motorLeftBack = 3; // Trigger Pin of the Left motor to go back
 const int motorLeftForward = 9; // Trigger Pin of Right motor to go forward
 const int motorRightBack = 5; // Trigger Pin of Right motor to go back
 const int motorRightForward = 6; // Trigger Pin of Right motor to go forward
-int lastSensor = NULL;
+
 
 
 void Motor(int x1, int x2, int x3, int x4){
