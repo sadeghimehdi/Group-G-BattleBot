@@ -23,6 +23,7 @@
 // etc. 0 means the line is directly under sensor 0 or was last seen by sensor
 // 0 before being lost. 5000 means the line is directly under sensor 5 or was
 // last seen by sensor 5 before being lost.
+
 QTRSensors qtr;
 const uint8_t SensorCount = 6;
 uint16_t sensorValues[SensorCount];
@@ -303,7 +304,7 @@ else if(sensorValues[3] > 600){
   // to the count of pixels minus one.
   // pixels.Color() takes GRB values, from 0,0,0 up to 255,255,255
 
-  if(cm<=20){
+  if(cm<=10){
      neoBack();
      Motor(0, 0, 210, 200);
      delay(1000);
