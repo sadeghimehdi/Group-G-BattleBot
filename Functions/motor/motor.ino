@@ -58,6 +58,5 @@ void setup()
 }
 void loop()
 {
-  
-}
+ //either call the specific functions or call Motor(x1, x2, x3, x4) with the speeds in it. x1 being the rightforward, x2 being rightback, x3 being left forward, x4 being leftback.
 }
