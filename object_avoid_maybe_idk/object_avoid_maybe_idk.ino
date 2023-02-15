@@ -1,6 +1,8 @@
 #include <Adafruit_NeoPixel.h>
 #include <QTRSensors.h>
 
+int avoidObstacle = 0;
+
 /****************************************************************************
  ***                          Line Sensor                                 ***
  ****************************************************************************/
@@ -60,7 +62,6 @@ const int motorRightBack = 5; // Trigger Pin of Ultrasonic Sensor
 const int motorRightForward = 6; // Trigger Pin of Ultrasonic Sensor
 int lastSensor = NULL;
 
-int avoidObstacle = 0;
 
 /****************************************************************************
  ***                                Functions                             ***
@@ -226,54 +227,53 @@ void loop()
 
 
 //Line following
+if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600){
+  if(lastSensor == 1){
+//      Right();
+      Motor(0, 255, 255, 0);
+      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
+  }
+  else if (lastSensor == 4){
+//     Left();
+     Motor(255, 0, 0, 255);
+     Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
+  }
+}
+else if (sensorValues[0] > 600){
+    Motor(100, 255, 0, 0);
+//    Right();
+    Serial.print("Go hard right");
+    lastSensor = 1;
+  }
+else if(sensorValues[1] > 600){
+   Motor(150, 255, 0, 0);
+   Serial.print("Go right");
+   lastSensor = 1;
+}
+else if(sensorValues[4] > 600){
+  Motor(255, 150, 0, 0);
+  Serial.print("Go left");
+   lastSensor = 4;
+}
+else if(sensorValues[5] > 600){
+//  Left();
+   Motor(255, 100, 0, 0);
+   Serial.print("Go hard left");
+   lastSensor = 4;
+  }
+else if(sensorValues[2] > 600 && sensorValues[3] > 600){
+  Forward();
+  Serial.print("go forward");
+  }
+else if(sensorValues[2] > 600){
+  Motor(255, 220, 0, 0);
+  Serial.print("go forwardish");
+  }
+else if(sensorValues[3] > 600){
+  Motor(220, 255, 0, 0);
+  Serial.print("go forwardish");
+  }
 
-  if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600){
-    if(lastSensor == 1){
-  //      Right();
-        Motor(0, 255, 255, 0);
-        Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
-    }
-    else if (lastSensor == 4){
-  //     Left();
-       Motor(255, 0, 0, 255);
-       Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
-    }
-  }
-  else if (sensorValues[0] > 600){
-      Motor(100, 255, 0, 0);
-  //    Right();
-      Serial.print("Go hard right");
-      lastSensor = 1;
-    }
-  else if(sensorValues[1] > 600){
-     Motor(150, 255, 0, 0);
-     Serial.print("Go right");
-     lastSensor = 1;
-  }
-  else if(sensorValues[4] > 600){
-    Motor(255, 150, 0, 0);
-    Serial.print("Go left");
-     lastSensor = 4;
-  }
-  else if(sensorValues[5] > 600){
-  //  Left();
-     Motor(255, 100, 0, 0);
-     Serial.print("Go hard left");
-     lastSensor = 4;
-    }
-  else if(sensorValues[2] > 600 && sensorValues[3] > 600){
-    Forward();
-    Serial.print("go forward");
-    }
-  else if(sensorValues[2] > 600){
-    Motor(255, 220, 0, 0);
-    Serial.print("go forwardish");
-    }
-  else if(sensorValues[3] > 600){
-    Motor(220, 255, 0, 0);
-    Serial.print("go forwardish");
-    }
-  
 /****************************************************************************
  ***                      Sonic Sensor(distance)                          ***
  ****************************************************************************/
@@ -306,82 +306,56 @@ void loop()
   // to the count of pixels minus one.
   // pixels.Color() takes GRB values, from 0,0,0 up to 255,255,255
 
-//  if(cm<1){
-//     neoBack();
-//     Motor(0, 0, 210, 200);
-//     delay(1000);
-//     
-//     neoForward();
-//     Stop();
-//     delay(200);
-//   
-//     neoLeft();
-//     delay(200);
-//
-//     neoForward();
-//     Motor(175, 0, 0, 150);
-//     delay(200); 
-//
-//     neoLeft();
-//     delay(200);
-// 
-//     neoForward();
-//     delay(200);
-// 
-//     neoLeft();
-//     delay(200);
-//  
-//     neoForward();
-//     delay(200);
-// 
-//     neoLeft();
-//     delay(200);
-//
-//     neoForward();
-//     delay(200);
-//
-//     neoLeft();
-//     delay(200);
-//
-//     neoForward();
-//     delay(200);
-//  
-//     neoLeft();
-//     delay(200);
-//     
-//     neoForward();
-//  }else{
-//    neoForward();
-//    Motor(160, 150, 0, 0);
-//  }  
 
-  if(cm<=20){
-      avoidObstacle = 1;
-    }
-
-  if (avoidObstacle == 1){
-      Left();
-      delay(300);
-
-     Forward();
-     delay(300);
-
-     Right();
-     delay(300);
+//if you comment out this code, the robot will overshoot for some reason ????
+  if(cm<=10){
+     neoBack();
+     Motor(0, 0, 210, 200);
+     delay(1000);
      
+     neoForward();
+     Stop();
+     delay(200);
+   
+     neoLeft();
+     delay(200);
 
-     Forward();
-     delay(300);
+     neoForward();
+     Motor(175, 0, 0, 150);
+     delay(200); 
 
-      Right();
-      delay(300);
+     neoLeft();
+     delay(200);
+ 
+     neoForward();
+     delay(200);
+ 
+     neoLeft();
+     delay(200);
+  
+     neoForward();
+     delay(200);
+ 
+     neoLeft();
+     delay(200);
 
-      Forward();
-      delay(300);
-      avoidObstacle = 0;
-    }
+     neoForward();
+     delay(200);
 
+     neoLeft();
+     delay(200);
 
+     neoForward();
+     delay(200);
+  
+     neoLeft();
+     delay(200);
+     
+     neoForward();
+  }else{
+    neoForward();
+    Motor(160, 150, 0, 0);
+  }  
 }
 
 /****************************************************************************
