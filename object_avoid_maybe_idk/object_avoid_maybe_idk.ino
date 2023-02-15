@@ -60,7 +60,7 @@ const int motorRightBack = 5; // Trigger Pin of Ultrasonic Sensor
 const int motorRightForward = 6; // Trigger Pin of Ultrasonic Sensor
 int lastSensor = NULL;
 
-int avoidObstacle = NULL;
+int avoidObstacle = 0;
 
 /****************************************************************************
  ***                                Functions                             ***
@@ -226,53 +226,54 @@ void loop()
 
 
 //Line following
-if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600){
-  if(lastSensor == 1){
-//      Right();
-      Motor(0, 255, 255, 0);
-      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
-  }
-  else if (lastSensor == 4){
-//     Left();
-     Motor(255, 0, 0, 255);
-     Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
-  }
-}
-else if (sensorValues[0] > 600){
-    Motor(100, 255, 0, 0);
-//    Right();
-    Serial.print("Go hard right");
-    lastSensor = 1;
-  }
-else if(sensorValues[1] > 600){
-   Motor(150, 255, 0, 0);
-   Serial.print("Go right");
-   lastSensor = 1;
-}
-else if(sensorValues[4] > 600){
-  Motor(255, 150, 0, 0);
-  Serial.print("Go left");
-   lastSensor = 4;
-}
-else if(sensorValues[5] > 600){
-//  Left();
-   Motor(255, 100, 0, 0);
-   Serial.print("Go hard left");
-   lastSensor = 4;
-  }
-else if(sensorValues[2] > 600 && sensorValues[3] > 600){
-  Forward();
-  Serial.print("go forward");
-  }
-else if(sensorValues[2] > 600){
-  Motor(255, 220, 0, 0);
-  Serial.print("go forwardish");
-  }
-else if(sensorValues[3] > 600){
-  Motor(220, 255, 0, 0);
-  Serial.print("go forwardish");
-  }
 
+  if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600){
+    if(lastSensor == 1){
+  //      Right();
+        Motor(0, 200, 200, 0);
+        Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
+    }
+    else if (lastSensor == 4){
+  //     Left();
+       Motor(200, 0, 0, 200);
+       Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
+    }
+  }
+  else if (sensorValues[0] > 600){
+      Motor(100, 200, 0, 0);
+  //    Right();
+      Serial.print("Go hard right");
+      lastSensor = 1;
+    }
+  else if(sensorValues[1] > 600){
+     Motor(150, 255, 0, 0);
+     Serial.print("Go right");
+     lastSensor = 1;
+  }
+  else if(sensorValues[4] > 600){
+    Motor(255, 150, 0, 0);
+    Serial.print("Go left");
+     lastSensor = 4;
+  }
+  else if(sensorValues[5] > 600){
+  //  Left();
+     Motor(200, 100, 0, 0);
+     Serial.print("Go hard left");
+     lastSensor = 4;
+    }
+  else if(sensorValues[2] > 600 && sensorValues[3] > 600){
+    Forward();
+    Serial.print("go forward");
+    }
+  else if(sensorValues[2] > 600){
+    Motor(255, 220, 0, 0);
+    Serial.print("go forwardish");
+    }
+  else if(sensorValues[3] > 600){
+    Motor(220, 255, 0, 0);
+    Serial.print("go forwardish");
+    }
+  
 /****************************************************************************
  ***                      Sonic Sensor(distance)                          ***
  ****************************************************************************/
@@ -360,20 +361,23 @@ else if(sensorValues[3] > 600){
 
   if (avoidObstacle == 1){
       Left();
-      delay(500);
+      delay(300);
 
      Forward();
-     delay(500);
+     delay(300);
 
      Right();
-     delay(500);
+     delay(300);
      
 
      Forward();
-     delay(500);
+     delay(300);
 
       Right();
-      delay(500);
+      delay(300);
+
+      Forward();
+      delay(300);
       avoidObstacle = 0;
     }
 
