@@ -307,6 +307,36 @@ else if(sensorValues[3] > 600){
   // pixels.Color() takes GRB values, from 0,0,0 up to 255,255,255
 
 
+
+//with this code enabled, the robot will start to overshoot the line way more and is slower to react to finding the line again, 
+//  if(cm<=20){
+//      avoidObstacle = 1;
+//    }
+
+
+//  if (avoidObstacle == 1){
+//      Left();
+//      delay(300);
+//
+//     Forward();
+//     delay(300);
+//
+//     Right();
+//     delay(300);
+//     
+//
+//     Forward();
+//     delay(300);
+//
+//      Right();
+//      delay(300);
+//
+//      Forward();
+//      delay(300);
+//      avoidObstacle = 0;
+//    }
+
+
 //if you comment out this code, the robot will overshoot for some reason ????
   if(cm<=10){
      neoBack();
