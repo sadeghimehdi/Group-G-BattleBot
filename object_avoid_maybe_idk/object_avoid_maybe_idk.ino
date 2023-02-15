@@ -230,17 +230,17 @@ void loop()
   if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600){
     if(lastSensor == 1){
   //      Right();
-        Motor(0, 200, 200, 0);
+        Motor(0, 255, 255, 0);
         Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
     }
     else if (lastSensor == 4){
   //     Left();
-       Motor(200, 0, 0, 200);
+       Motor(255, 0, 0, 255);
        Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
     }
   }
   else if (sensorValues[0] > 600){
-      Motor(100, 200, 0, 0);
+      Motor(100, 255, 0, 0);
   //    Right();
       Serial.print("Go hard right");
       lastSensor = 1;
@@ -257,7 +257,7 @@ void loop()
   }
   else if(sensorValues[5] > 600){
   //  Left();
-     Motor(200, 100, 0, 0);
+     Motor(255, 100, 0, 0);
      Serial.print("Go hard left");
      lastSensor = 4;
     }
