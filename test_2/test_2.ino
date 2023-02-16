@@ -1,6 +1,10 @@
 #include <Adafruit_NeoPixel.h>
 #include <QTRSensors.h>
-
+#include <Servo.h>
+Servo gripper; 
+const int gripperPin = 2;
+int gripperClosed = 0;
+int servoPos = 5;
 /****************************************************************************
  ***                          Line Sensor                                 ***
  ****************************************************************************/
@@ -24,7 +28,6 @@
 // 0 before being lost. 5000 means the line is directly under sensor 5 or was
 // last seen by sensor 5 before being lost.
 
-int gripperClose = 0;
 
 QTRSensors qtr;
 const uint8_t SensorCount = 8;
@@ -149,6 +152,13 @@ void setup()
 {
 
 /****************************************************************************
+ ***                          Gripper                                     ***
+ ****************************************************************************/
+
+
+    gripper.attach(gripperPin);
+
+/****************************************************************************
  ***                          Line Sensor                                 ***
  ****************************************************************************/
   // configure the sensors
@@ -161,11 +171,10 @@ void setup()
   // analogRead() takes about 0.1 ms on an AVR.
   // 0.1 ms per sensor * 4 samples per sensor read (default) * 8 sensors
   // * 10 reads per calibrate() call = ~32 ms per calibrate() call.
-  // Call calibrate() 20 times to make calibration take about 0.66 seconds.
+  // Call calibrate() 15 times to make calibration take about 0,48 seconds.
   Motor(255,255,0,0);
-  delay(50);
-  for (uint16_t i = 0; i < 20; i++){
-    Motor (120, 100, 0, 0);
+
+  for (uint16_t i = 0; i < 15; i++){
     qtr.calibrate();
   }
   
@@ -229,8 +238,14 @@ void loop()
 //7 is the most left sensor
 
 
-if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && sensorValues[3] > 600 && sensorValues[4] > 600 && sensorValues[5] > 600 && sensorValues[6] > 600 && sensorValues[7] > 600) && gripperClose == 1{
+if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && sensorValues[3] > 600 && sensorValues[4] > 600 && sensorValues[5] > 600 && sensorValues[6] > 600 && sensorValues[7] > 600 && gripperClosed == 0){
+  Stop();
   //close gripper
+  gripperClose();
+  gripperClosed = 1;
+ 
+  delay(200);
+  Right();
 }
 
 //Line following
@@ -385,4 +400,23 @@ long microsecondsToInches(long microseconds) {
 
 long microsecondsToCentimeters(long microseconds) {
    return microseconds / 29 / 2;
+}
+
+/****************************************************************************
+ ***                      Gripper                                         ***
+ ****************************************************************************/
+
+void gripperOpen(){
+  for (servoPos = 5; servoPos <= 130; servoPos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    gripper.write(servoPos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+}
+
+void gripperClose(){
+  for (servoPos = 130; servoPos >= 5; servoPos -= 1) { // goes from 180 degrees to 0 degrees
+    gripper.write(servoPos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
 }
