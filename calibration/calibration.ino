@@ -220,18 +220,18 @@ void loop()
 //  delay(100);
 
 //0 is the most right sensor
-//5 is the most left sensor
+//7 is the most left sensor
 
 
 
 //Line following
-if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600){
+if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600 && sensorValues[6] < 600 && sensorValues[7] < 600){
   if(lastSensor == 1){
 //      Right();
       Motor(0, 255, 255, 0);
       Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
   }
-  else if (lastSensor == 4){
+  else if (lastSensor == 7){
 //     Left();
      Motor(255, 0, 0, 255);
      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
@@ -248,29 +248,38 @@ else if(sensorValues[1] > 600){
    Serial.print("Go right");
    lastSensor = 1;
 }
-else if(sensorValues[4] > 600){
-  Motor(255, 150, 0, 0);
-  Serial.print("Go left");
-   lastSensor = 4;
+else if(sensorValues[2] > 600){
+  Motor(200, 255, 0, 0);
+  Serial.print("go rightish");
 }
 else if(sensorValues[5] > 600){
+  Motor(255, 200, 0, 0);
+  Serial.print("go leftish");
+  }
+else if(sensorValues[6] > 600){
+  Motor(255, 150, 0, 0);
+  Serial.print("Go left");
+   lastSensor = 7;
+}
+else if(sensorValues[7] > 600){
 //  Left();
    Motor(255, 100, 0, 0);
    Serial.print("Go hard left");
-   lastSensor = 4;
+   lastSensor = 7;
   }
-else if(sensorValues[2] > 600 && sensorValues[3] > 600){
+else if(sensorValues[3] > 600 && sensorValues[4] > 600){
   Forward();
   Serial.print("go forward");
   }
-else if(sensorValues[2] > 600){
+else if(sensorValues[3] > 600){
   Motor(255, 220, 0, 0);
   Serial.print("go forwardish");
-  }
-else if(sensorValues[3] > 600){
+}
+else if(sensorValues[4] > 600){
   Motor(220, 255, 0, 0);
   Serial.print("go forwardish");
   }
+
 
 /****************************************************************************
  ***                      Sonic Sensor(distance)                          ***
