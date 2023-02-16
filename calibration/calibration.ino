@@ -24,6 +24,8 @@
 // 0 before being lost. 5000 means the line is directly under sensor 5 or was
 // last seen by sensor 5 before being lost.
 
+int gripperClose = 0;
+
 QTRSensors qtr;
 const uint8_t SensorCount = 8;
 uint16_t sensorValues[SensorCount];
@@ -157,12 +159,16 @@ void setup()
   digitalWrite(LED_BUILTIN, HIGH); // turn on Arduino's LED to indicate we are in calibration mode
 
   // analogRead() takes about 0.1 ms on an AVR.
-  // 0.1 ms per sensor * 4 samples per sensor read (default) * 6 sensors
-  // * 10 reads per calibrate() call = ~24 ms per calibrate() call.
-  // Call calibrate() 200 times to make calibration take about 5 seconds.
-  for (uint16_t i = 0; i < 200; i++){
+  // 0.1 ms per sensor * 4 samples per sensor read (default) * 8 sensors
+  // * 10 reads per calibrate() call = ~32 ms per calibrate() call.
+  // Call calibrate() 20 times to make calibration take about 0.66 seconds.
+  Motor(255,255,0,0);
+  delay(50);
+  for (uint16_t i = 0; i < 20; i++){
+    Motor (120, 100, 0, 0);
     qtr.calibrate();
   }
+  
   digitalWrite(LED_BUILTIN, LOW); // turn off Arduino's LED to indicate we are through with calibration
 
   // print the calibration minimum values measured when emitters were on
@@ -223,9 +229,12 @@ void loop()
 //7 is the most left sensor
 
 
+if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && sensorValues[3] > 600 && sensorValues[4] > 600 && sensorValues[5] > 600 && sensorValues[6] > 600 && sensorValues[7] > 600) && gripperClose == 1{
+  //close gripper
+}
 
 //Line following
-if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600 && sensorValues[6] < 600 && sensorValues[7] < 600){
+else if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600 && sensorValues[6] < 600 && sensorValues[7] < 600){
   if(lastSensor == 1){
 //      Right();
       Motor(0, 255, 255, 0);
@@ -237,46 +246,49 @@ if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && se
      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
   }
 }
-else if (sensorValues[0] > 600){
-    Motor(100, 255, 0, 0);
-//    Right();
-    Serial.print("Go hard right");
-    lastSensor = 1;
-  }
-else if(sensorValues[1] > 600){
-   Motor(150, 255, 0, 0);
-   Serial.print("Go right");
-   lastSensor = 1;
-}
-else if(sensorValues[2] > 600){
-  Motor(200, 255, 0, 0);
-  Serial.print("go rightish");
-}
-else if(sensorValues[5] > 600){
-  Motor(255, 200, 0, 0);
-  Serial.print("go leftish");
-  }
-else if(sensorValues[6] > 600){
-  Motor(255, 150, 0, 0);
-  Serial.print("Go left");
-   lastSensor = 7;
-}
 else if(sensorValues[7] > 600){
 //  Left();
    Motor(255, 100, 0, 0);
    Serial.print("Go hard left");
    lastSensor = 7;
   }
+
+else if(sensorValues[6] > 600){
+  Motor(255, 150, 0, 0);
+  Serial.print("Go left");
+   lastSensor = 7;
+}
+else if(sensorValues[5] > 600){
+  Motor(255, 200, 0, 0);
+  Serial.print("go leftish");
+  }
+
+else if(sensorValues[2] > 600){
+  Motor(200, 255, 0, 0);
+  Serial.print("go rightish");
+}
+
+else if(sensorValues[1] > 600){
+   Motor(150, 255, 0, 0);
+   Serial.print("Go right");
+   lastSensor = 1;
+}
+  else if (sensorValues[0] > 600){
+    Motor(100, 255, 0, 0);
+//    Right();
+    Serial.print("Go hard right");
+    lastSensor = 1;
+  }
 else if(sensorValues[3] > 600 && sensorValues[4] > 600){
   Forward();
   Serial.print("go forward");
   }
 else if(sensorValues[3] > 600){
-  Motor(255, 220, 0, 0);
+  Motor(220, 255, 0, 0);
   Serial.print("go forwardish");
 }
 else if(sensorValues[4] > 600){
-  Motor(220, 255, 0, 0);
+  Motor(255, 220, 0, 0);
   Serial.print("go forwardish");
   }
 
@@ -313,7 +325,7 @@ else if(sensorValues[4] > 600){
   // to the count of pixels minus one.
   // pixels.Color() takes GRB values, from 0,0,0 up to 255,255,255
 
-  if(cm<=10){
+  if(cm<=1){
      neoBack();
      Motor(0, 0, 210, 200);
      delay(1000);
