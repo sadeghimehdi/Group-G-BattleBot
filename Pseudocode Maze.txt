@@ -1,0 +1,20 @@
+
+as long as no black line detected
+	if path forward
+		move forward x distance
+		
+	if left path
+		turn left 90 degrees
+	else
+		if forward path
+			do nothing
+		else
+			turn right 90 degrees
+
+
+//this code runs when the black line is detected
+align robot with line
+follow line until all sensors detect black
+drop baton
+
+
