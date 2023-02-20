@@ -261,7 +261,7 @@ else if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 
      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
   }
 }
-else if(sensorValues[7] > 600){
+else if(sensorValues[0] > 600){
 //  Left();
    Motor(255, 100, 0, 0);
    Serial.print("Go hard left");
@@ -273,7 +273,9 @@ else if(sensorValues[6] > 600){
   Serial.print("Go left");
    lastSensor = 7;
 }
-else if(sensorValues[5] > 600){
+
+//insted of [5] i put 1
+else if(sensorValues[1] > 600){
   Motor(255, 200, 0, 0);
   Serial.print("go leftish");
   }
@@ -288,7 +290,7 @@ else if(sensorValues[1] > 600){
    Serial.print("Go right");
    lastSensor = 1;
 }
-  else if (sensorValues[0] > 600){
+  else if (sensorValues[7] > 600){
     Motor(100, 255, 0, 0);
 //    Right();
     Serial.print("Go hard right");
