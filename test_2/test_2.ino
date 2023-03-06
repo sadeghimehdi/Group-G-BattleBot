@@ -287,22 +287,16 @@ else if(sensorValues[4] > 600){
   Serial.print("go forwardish");
   }
 
-else if(sensorValues[5] > 600){
-  Motor(255, 230, 0, 0);
-  Serial.print("go leftish");
-  }
-  
+
 else if(sensorValues[6] > 600){
   Motor(255, 190, 0, 0);
   Serial.print("Go left");
    lastSensor = 7;
 }
 
-  else if(sensorValues[7] > 600){
-//  Left();
-   Motor(255, 160, 0, 0);
-   Serial.print("Go hard left");
-   lastSensor = 7;
+else if(sensorValues[5] > 600){
+  Motor(255, 230, 0, 0);
+  Serial.print("go leftish");
   }
 
 else if(sensorValues[2] > 600){
