@@ -1,8 +1,7 @@
-const int motorLeftBack = 3; // Trigger Pin of the Left motor to go back
-const int motorLeftForward = 9; // Trigger Pin of Right motor to go forward
-const int motorRightBack = 5; // Trigger Pin of Right motor to go back
-const int motorRightForward = 6; // Trigger Pin of Right motor to go forward
-
+const int motorLeftBack = 5; // Trigger Pin of Ultrasonic Sensor
+const int motorLeftForward = 9; // Trigger Pin of Ultrasonic Sensor
+const int motorRightBack = 6; // Trigger Pin of Ultrasonic Sensor
+const int motorRightForward = 10; // Trigger Pin of Ultrasonic Sensor
 
 
 void Motor(int x1, int x2, int x3, int x4){
