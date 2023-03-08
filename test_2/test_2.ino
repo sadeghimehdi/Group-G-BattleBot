@@ -60,8 +60,8 @@ const int echoPin = 7; // Echo Pin of Ultrasonic Sensor
  ****************************************************************************/
 
 const int motorLeftBack = 5; // Trigger Pin of Ultrasonic Sensor
-const int motorLeftForward = 9; // Trigger Pin of Ultrasonic Sensor
-const int motorRightBack = 6; // Trigger Pin of Ultrasonic Sensor
+const int motorLeftForward = 6; // Trigger Pin of Ultrasonic Sensor
+const int motorRightBack = 9; // Trigger Pin of Ultrasonic Sensor
 const int motorRightForward = 10; // Trigger Pin of Ultrasonic Sensor
 int lastSensor = NULL;
 
@@ -264,30 +264,14 @@ else if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 
 //      Motor(0, 240, 190, 0);
       Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
   }
-  else if (lastSensor > 4){
+  else if (lastSensor > 3){
      Left();
 //     Motor(240, 0, 0, 190);
      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
   }
 }
   
-else if(sensorValues[3] > 600 && sensorValues[4] > 600){
-  Forward();
-  Serial.print("go forward");
-  lastSensor = NULL;
-  }
-  
-else if(sensorValues[3] > 600){
-  Motor(250, 255, 0, 0);
-  Serial.print("go forwardish");
-  lastSensor = NULL;
-}
 
-else if(sensorValues[4] > 600){
-  Motor(255, 245, 0, 0);
-  Serial.print("go forwardish");
-  lastSensor = NULL;
-  }
   
   else if (sensorValues[7] > 600){
     Motor(255, 180, 0, 0);
@@ -328,7 +312,23 @@ else if(sensorValues[1] > 600){
     lastSensor = 0;
     Serial.println("Last sensor is " + String(lastSensor));
   }
+else if(sensorValues[3] > 600 && sensorValues[4] > 600){
+  Forward();
+  Serial.print("go forward");
+//  lastSensor = NULL;
+  }
+  
+else if(sensorValues[3] > 600){
+  Motor(250, 255, 0, 0);
+  Serial.print("go forwardish");
+  lastSensor = 3;
+}
 
+else if(sensorValues[4] > 600){
+  Motor(255, 245, 0, 0);
+  Serial.print("go forwardish");
+  lastSensor = 4;
+  }
 
 
 /****************************************************************************
