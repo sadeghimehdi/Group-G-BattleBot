@@ -254,18 +254,19 @@ if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && se
  
   delay(200);
   Right();
+  delay(100);
 }
 
 //Line following
 else if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600 && sensorValues[6] < 600 && sensorValues[7] < 600){
   if(lastSensor == 1){
 //      Right();
-      Motor(0, 210, 210, 0);
+      Motor(0, 210, 200, 0);
       Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
   }
   else if (lastSensor == 7){
 //     Left();
-     Motor(210, 0, 0, 210);
+     Motor(210, 0, 0, 200);
      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
   }
 }
@@ -276,20 +277,23 @@ else if(sensorValues[3] > 600 && sensorValues[4] > 600){
   }
   
 else if(sensorValues[3] > 600){
-  Motor(240, 255, 0, 0);
+  Motor(250, 255, 0, 0);
  
   Serial.print("go forwardish");
 }
 
 else if(sensorValues[4] > 600){
-  Motor(255, 240, 0, 0);
+  Motor(255, 245, 0, 0);
 
   Serial.print("go forwardish");
   }
-
-
+  else if (sensorValues[7] > 600){
+    Motor(255, 180, 0, 0);
+    Serial.print("Go hard left");
+    lastSensor = 7;
+  }
 else if(sensorValues[6] > 600){
-  Motor(255, 190, 0, 0);
+  Motor(255, 210, 0, 0);
   Serial.print("Go left");
    lastSensor = 7;
 }
@@ -305,12 +309,12 @@ else if(sensorValues[2] > 600){
 }
 
 else if(sensorValues[1] > 600){
-   Motor(190, 255, 0, 0);
+   Motor(210, 255, 0, 0);
    Serial.print("Go right");
    lastSensor = 1;
 }
   else if (sensorValues[0] > 600){
-    Motor(160, 255, 0, 0);
+    Motor(180, 255, 0, 0);
 //    Right();
     Serial.print("Go hard right");
     lastSensor = 1;
