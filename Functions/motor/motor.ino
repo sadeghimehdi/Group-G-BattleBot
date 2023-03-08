@@ -1,6 +1,6 @@
 const int motorLeftBack = 5; // Trigger Pin of Ultrasonic Sensor
-const int motorLeftForward = 9; // Trigger Pin of Ultrasonic Sensor
-const int motorRightBack = 6; // Trigger Pin of Ultrasonic Sensor
+const int motorLeftForward = 6; // Trigger Pin of Ultrasonic Sensor
+const int motorRightBack = 9; // Trigger Pin of Ultrasonic Sensor
 const int motorRightForward = 10; // Trigger Pin of Ultrasonic Sensor
 
 
