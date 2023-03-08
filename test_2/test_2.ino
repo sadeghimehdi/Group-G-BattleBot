@@ -72,7 +72,15 @@ int lastSensor = NULL;
 
 /************************** MOTORS *****************************/
 void Motor(int x1, int x2, int x3, int x4){
-   analogWrite(motorRightForward, x1);
+  Serial.print(x1);
+  Serial.print("-");
+  Serial.print(x2);
+  Serial.print("-");
+  Serial.print(x3);
+  Serial.print("-");
+  Serial.println(x4);
+
+  analogWrite(motorRightForward, x1);
    analogWrite(motorLeftForward, x2);
    analogWrite(motorRightBack, x3);
    analogWrite(motorLeftBack, x4);    
@@ -154,7 +162,7 @@ void setup()
 /****************************************************************************
  ***                          Gripper                                     ***
  ****************************************************************************/
-
+  gripperOpen();
 
     gripper.attach(gripperPin);
 
@@ -246,66 +254,72 @@ if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && se
  
   delay(200);
   Right();
+  delay(100);
 }
 
 //Line following
 else if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600 && sensorValues[6] < 600 && sensorValues[7] < 600){
   if(lastSensor == 1){
 //      Right();
-      Motor(0, 255, 255, 0);
+      Motor(0, 210, 200, 0);
       Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
   }
   else if (lastSensor == 7){
 //     Left();
-     Motor(255, 0, 0, 255);
+     Motor(210, 0, 0, 200);
      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
   }
 }
-else if(sensorValues[7] > 600){
-//  Left();
-   Motor(255, 100, 0, 0);
-   Serial.print("Go hard left");
-   lastSensor = 7;
-  }
-
-else if(sensorValues[6] > 600){
-  Motor(255, 150, 0, 0);
-  Serial.print("Go left");
-   lastSensor = 7;
-}
-else if(sensorValues[5] > 600){
-  Motor(255, 200, 0, 0);
-  Serial.print("go leftish");
-  }
-
-else if(sensorValues[2] > 600){
-  Motor(200, 255, 0, 0);
-  Serial.print("go rightish");
-}
-
-else if(sensorValues[1] > 600){
-   Motor(150, 255, 0, 0);
-   Serial.print("Go right");
-   lastSensor = 1;
-}
-  else if (sensorValues[0] > 600){
-    Motor(100, 255, 0, 0);
-//    Right();
-    Serial.print("Go hard right");
-    lastSensor = 1;
-  }
+  
 else if(sensorValues[3] > 600 && sensorValues[4] > 600){
   Forward();
   Serial.print("go forward");
   }
+  
 else if(sensorValues[3] > 600){
-  Motor(220, 255, 0, 0);
+  Motor(250, 255, 0, 0);
+ 
   Serial.print("go forwardish");
 }
+
 else if(sensorValues[4] > 600){
-  Motor(255, 220, 0, 0);
+  Motor(255, 245, 0, 0);
+
   Serial.print("go forwardish");
   }
+  else if (sensorValues[7] > 600){
+    Motor(255, 180, 0, 0);
+    Serial.print("Go hard left");
+    lastSensor = 7;
+  }
+else if(sensorValues[6] > 600){
+  Motor(255, 210, 0, 0);
+  Serial.print("Go left");
+   lastSensor = 7;
+}
+
+else if(sensorValues[5] > 600){
+  Motor(255, 230, 0, 0);
+  Serial.print("go leftish");
+  }
+
+else if(sensorValues[2] > 600){
+  Motor(230, 255, 0, 0);
+  Serial.print("go rightish");
+}
+
+else if(sensorValues[1] > 600){
+   Motor(210, 255, 0, 0);
+   Serial.print("Go right");
+   lastSensor = 1;
+}
+  else if (sensorValues[0] > 600){
+    Motor(180, 255, 0, 0);
+//    Right();
+    Serial.print("Go hard right");
+    lastSensor = 1;
+  }
+
 
 
 /****************************************************************************
@@ -340,54 +354,54 @@ else if(sensorValues[4] > 600){
   // to the count of pixels minus one.
   // pixels.Color() takes GRB values, from 0,0,0 up to 255,255,255
 
-  if(cm<=1){
-     neoBack();
-     Motor(0, 0, 210, 200);
-     delay(1000);
-     
-     neoForward();
-     Stop();
-     delay(200);
-   
-     neoLeft();
-     delay(200);
-
-     neoForward();
-     Motor(175, 0, 0, 150);
-     delay(200); 
-
-     neoLeft();
-     delay(200);
- 
-     neoForward();
-     delay(200);
- 
-     neoLeft();
-     delay(200);
-  
-     neoForward();
-     delay(200);
- 
-     neoLeft();
-     delay(200);
-
-     neoForward();
-     delay(200);
-
-     neoLeft();
-     delay(200);
-
-     neoForward();
-     delay(200);
-  
-     neoLeft();
-     delay(200);
-     
-     neoForward();
-  }else{
-    neoForward();
-    Motor(160, 150, 0, 0);
-  }  
+//  if(cm<=1){
+//     neoBack();
+//     Motor(0, 0, 210, 200);
+//     delay(1000);
+//     
+//     neoForward();
+//     Stop();
+//     delay(200);
+//   
+//     neoLeft();
+//     delay(200);
+//
+//     neoForward();
+//     Motor(175, 0, 0, 150);
+//     delay(200); 
+//
+//     neoLeft();
+//     delay(200);
+// 
+//     neoForward();
+//     delay(200);
+// 
+//     neoLeft();
+//     delay(200);
+//  
+//     neoForward();
+//     delay(200);
+// 
+//     neoLeft();
+//     delay(200);
+//
+//     neoForward();
+//     delay(200);
+//
+//     neoLeft();
+//     delay(200);
+//
+//     neoForward();
+//     delay(200);
+//  
+//     neoLeft();
+//     delay(200);
+//     
+//     neoForward();
+//  }else{
+//    neoForward();
+//    Motor(160, 150, 0, 0);
+//  }  
 }
 
 /****************************************************************************
