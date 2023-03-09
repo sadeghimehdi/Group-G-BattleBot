@@ -1,4 +1,13 @@
 
+Starting sequence
+receive signal from other robot
+move forward + calibrate line sensors
+pick up baton
+turn left 90 degrees
+move forward x distance
+
+----------------------------------------------------------------------------
+
 as long as no black line detected
 	if path forward
 		move forward x distance
@@ -11,6 +20,7 @@ as long as no black line detected
 		else
 			turn right 90 degrees
 
+----------------------------------------------------------------------------
 
 //this code runs when the black line is detected
 align robot with line

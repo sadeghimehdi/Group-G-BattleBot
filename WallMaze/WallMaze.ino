@@ -19,7 +19,7 @@ const int echoPin = 3; //pin for receiving the sound
 long duration; //time the sound takes to travel
 long distance; //distance in cm, will be calculated from the duration
 
-int minDistance = 15;
+int minDistance = 20;
 
 void setup() {
   // put your setup code here, to run once:
@@ -40,6 +40,13 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  leftMaze();
+
+  delay(1000);
+  
+}//end loop
+
+void leftMaze(){
   sensorCenter();
   delay(250);
   distance = getDistance();
@@ -47,7 +54,7 @@ void loop() {
   if(distance > minDistance){
     Serial.println("ONWARDS");
     moveForwards();
-    delay(500);
+    delay(1000);
     stopRobot();
   }
 
@@ -74,17 +81,33 @@ void loop() {
       Serial.println("Nothing left to do");
     } else {
 
-      Serial.println("RIGHT");
-      turnRight();
-      delay(400);
-      stopRobot();
+      Serial.println("Nothing center");
+      sensorRight();
+      delay(250);
+      distance = getDistance();
+
+      if(distance > minDistance){
+        
+        Serial.println("RIGHT");
+        turnRight();
+        delay(400);
+        stopRobot();
+        
+      } else {
+        
+        Serial.println("BACKTRACK");
+        turnAround();
+        
+      }//end if right
+      
     }//end if forward
     
   }//end if left
+}//end leftMaze
 
-  delay(1000);
+void rightMaze(){
   
-}//end loop
+}
 
 int getDistance(){
   digitalWrite(trigPin, LOW); //clear the trig pin
@@ -102,6 +125,24 @@ int getDistance(){
 
   return distance;
 }
+
+void turnAround(){
+  digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, HIGH);
+  digitalWrite(motorB1, LOW);
+  digitalWrite(motorB2, LOW);
+
+  delay(500);
+
+  digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, LOW);
+  digitalWrite(motorB1, LOW);
+  digitalWrite(motorB2, HIGH);
+
+  delay(500);
+
+  stopRobot();
+}//end turnAround
 
 void stopRobot(){
   digitalWrite(motorA1, LOW);
@@ -143,14 +184,11 @@ void gripperOpen(){
 }
 
 void gripperClose(){
-  for (servoPos = 180; servoPos >= 0; servoPos -= 1) { //gripper from open to close
-    gripper.write(servoPos);              
-    delay(5);                       
-  }
+  gripper.write(41);
 }
 
 void sensorLeft(){
-  rotator.write(180); //90 degrees left
+  rotator.write(170); //90 degrees left
 }
 
 void sensorRight(){
