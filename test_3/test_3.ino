@@ -299,6 +299,7 @@ if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && se
 
  if (amount > 4 && amount < 8){
   Forward();
+  delay(50);
   }
 
 unsigned long currentMillis = millis();
