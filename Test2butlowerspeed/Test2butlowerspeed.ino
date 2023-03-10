@@ -29,9 +29,23 @@ int servoPos = 5;
 // last seen by sensor 5 before being lost.
 
 
+
+
+
+
+
 QTRSensors qtr;
 const uint8_t SensorCount = 8;
 uint16_t sensorValues[SensorCount];
+
+
+/****************************************************************************
+ ***                             Millis                                   ***
+ ****************************************************************************/
+unsigned long previousMillis_1 = 0;
+
+const long interval_1 = 50000; //interval for first event (50sssssseconds)
+
 
 /****************************************************************************
  ***                          Neo Pixels                                  ***
@@ -59,10 +73,10 @@ const int echoPin = 7; // Echo Pin of Ultrasonic Sensor
  ***                                Motor                                 ***
  ****************************************************************************/
 
-const int motorLeftBack = 5; // Trigger Pin of Ultrasonic Sensor
-const int motorLeftForward = 6; // Trigger Pin of Ultrasonic Sensor
-const int motorRightBack = 9; // Trigger Pin of Ultrasonic Sensor
-const int motorRightForward = 10; // Trigger Pin of Ultrasonic Sensor
+const int motorLeftBack = 5; 
+const int motorLeftForward = 6; 
+const int motorRightBack = 9; 
+const int motorRightForward = 3;
 int lastSensor = NULL;
 
 
@@ -88,7 +102,7 @@ void Motor(int x1, int x2, int x3, int x4){
 
 void Right(){
    analogWrite(motorRightForward, 0);
-   analogWrite(motorLeftForward, 200);
+   analogWrite(motorLeftForward, 255);
    analogWrite(motorRightBack, 0);
    analogWrite(motorLeftBack, 0);
   }
@@ -222,6 +236,18 @@ void setup()
 void loop()
 {
 
+
+
+/****************************************************************************
+ ***         Experimental check for if 4 sensors see black                ***
+ ****************************************************************************/
+
+
+
+
+
+  
+
 /****************************************************************************
  ***                          Line Sensor with Motor                      ***
  ****************************************************************************/
@@ -254,75 +280,163 @@ if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && se
  
   delay(200);
   Left();
+  delay(300);
+  Forward();
   delay(200);
 }
+//if(sensorValues[0] > 800 || sensorValues[1] > 800 || sensorValues[2] > 800 || sensorValues[3] > 800 || sensorValues[4] > 800 || sensorValues[5] > 800 || sensorValues[6] > 800 || sensorValues[7] > 800){
+  int amount = 0;
+  if(sensorValues[0] > 800){ amount = amount + 1;};
+  if(sensorValues[1] > 800){ amount = amount + 1;};
+  if(sensorValues[2] > 800){ amount = amount + 1;};
+  if(sensorValues[3] > 800){ amount = amount + 1;};
+  if(sensorValues[4] > 800){ amount = amount + 1;};
+  if(sensorValues[5] > 800){ amount = amount + 1;};
+  if(sensorValues[6] > 800){ amount = amount + 1;};
+  if(sensorValues[7] > 800){ amount = amount + 1;};
+  Serial.println("The amount is" + String(amount));
+  
+
+ if (amount > 4 && amount < 8){
+  Forward();
+  }
+
+unsigned long currentMillis = millis();
+
+if(amount > 7 ){
+  if(currentMillis - previousMillis_1 >= interval_1){
+    Stop();
+    delay(500);
+    gripperOpen();
+    delay(500);
+    Backward();
+    delay(1000);
+    gripperClosed = 0;  
+    Stop();
+    delay(99999);
+  }
+}
+
 
 //Line following
-else if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600 && sensorValues[6] < 600 && sensorValues[7] < 600){
-  if(lastSensor == 1){
+
+if (amount < 4 || amount > 7){
+
+ if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600 && sensorValues[6] < 600 && sensorValues[7] < 600){
+  if(lastSensor < 4){
 //      Right();
-      Motor(0, 200, 0, 0);
+      Motor(0, 190, 190, 0);
       Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
   }
-  else if (lastSensor == 7){
+  else if (lastSensor > 3){
 //     Left();
-     Motor(255, 0, 0, 0);
+     Motor(190, 0, 0, 190);
      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
   }
 }
   
-else if(sensorValues[3] > 600 && sensorValues[4] > 600){
-//  Forward();
-  Motor(200, 200, 0, 0);
-  Serial.print("go forward");
-  }
-  
-else if(sensorValues[3] > 600){
-  Motor(195, 200, 0, 0);
-  Serial.print("go forwardish");
-}
-
-else if(sensorValues[4] > 600){
-  Motor(200, 190, 0, 0);
-  Serial.print("go forwardish");
-  }
-  
-  else if (sensorValues[7] > 600){
-    Motor(200, 160, 0, 0);
+  else if (sensorValues[7] > 600 && sensorValues[6] < 600){
+    Motor(200, 100, 0, 0);
     Serial.print("Go hard left");
     lastSensor = 7;
+    Serial.println("Last sensor is " + String(lastSensor));
   }
-else if(sensorValues[6] > 600){
-  Motor(200, 170, 0, 0);
-  Serial.print("Go left");
-   lastSensor = 7;
-}
-
-else if(sensorValues[5] > 600){
-  Motor(200, 180, 0, 0);
-  Serial.print("go leftish");
-  lastSensor = 7;
+  else if (sensorValues[7] > 600 && sensorValues[6] > 600){
+    Motor(200, 110, 0, 0);
+    Serial.print("Go hardish left");
+    lastSensor = 7;
+    Serial.println("Last sensor is " + String(lastSensor));
   }
-
-else if(sensorValues[2] > 600){
-  Motor(180, 200, 0, 0);
-  Serial.print("go rightish");
-  lastSensor = 1;
-}
-
-else if(sensorValues[1] > 600){
-   Motor(170, 200, 0, 0);
-   Serial.print("Go right");
-   lastSensor = 1;
-}
-  else if (sensorValues[0] > 600){
-    Motor(160, 200, 0, 0);
-    Serial.print("Go hard right");
-    lastSensor = 1;
+  
+  else if(sensorValues[6] > 600 && sensorValues[5] < 600){
+     Motor(200, 120, 0, 0);
+     Serial.println("Go left");
+     lastSensor = 6;
+     Serial.println("Last sensor is " + String(lastSensor));
+  }
+  else if(sensorValues[6] > 600 && sensorValues[5] > 600){
+     Motor(200, 130, 0, 0);
+     Serial.println("Goish left");
+     lastSensor = 6;
+     Serial.println("Last sensor is " + String(lastSensor));
   }
 
+  
+  else if(sensorValues[5] > 600 && sensorValues[4] < 600){
+    Motor(200, 130, 0, 0);
+    Serial.println("go leftish");
+    lastSensor = 5;
+    Serial.println("Last sensor is " + String(lastSensor));
+    }
 
+      else if(sensorValues[5] > 600 && sensorValues[4] > 600){
+    Motor(200, 140, 0, 0);
+    Serial.println("go leftish"); 
+    lastSensor = 5;
+    Serial.println("Last sensor is " + String(lastSensor));
+    }
 
+    else if (sensorValues[0] > 600 && sensorValues[1] < 600){
+      Motor(100, 200, 0, 0);
+      Serial.println("Go hard right");
+      lastSensor = 0;
+      Serial.println("Last sensor is " + String(lastSensor));
+    }
+
+ else if(sensorValues[0] > 600 && sensorValues[1] > 600){
+     Motor(110, 200, 0, 0);
+     Serial.println("Go right");
+     lastSensor = 1;
+     Serial.println("Last sensor is " + String(lastSensor));
+  }
+    
+  else if(sensorValues[1] > 600 && sensorValues[2] < 600){
+     Motor(120, 200, 0, 0);
+     Serial.println("Go right");
+     lastSensor = 1;
+     Serial.println("Last sensor is " + String(lastSensor));
+  }
+ 
+    else if(sensorValues[1] > 600 && sensorValues[2] > 600){
+    Motor(120, 200, 0, 0);
+    Serial.println("go rightish");
+    lastSensor = 2;
+    Serial.println("Last sensor is " + String(lastSensor));
+  }
+  
+  else if(sensorValues[2] > 600 && sensorValues[3] < 600){
+    Motor(130, 200, 0, 0);
+    Serial.println("go rightish");
+    lastSensor = 2;
+    Serial.println("Last sensor is " + String(lastSensor));
+  }
+
+  else if(sensorValues[2] > 600 && sensorValues[3] > 600){
+    Motor(140, 200, 0, 0);
+    Serial.println("go rightish");
+    lastSensor = 2;
+    Serial.println("Last sensor is " + String(lastSensor));
+  }
+
+  else if(sensorValues[3] > 600 && sensorValues[4] > 600){
+//    Forward();
+    Motor(170, 170, 0, 0);
+    Serial.print("go forward");
+  //  lastSensor = NULL;
+    }
+    
+  else if(sensorValues[3] > 600 && sensorValues[4] < 600){
+    Motor(170, 180, 0, 0);
+    Serial.print("go forwardish");
+    lastSensor = 3;
+  }
+  
+  else if(sensorValues[4] > 600 && sensorValues[3] < 600){
+    Motor(180, 170, 0, 0);
+    Serial.print("go forwardish");
+    lastSensor = 4;
+    }
+}
 /****************************************************************************
  ***                      Sonic Sensor(distance)                          ***
  ****************************************************************************/
