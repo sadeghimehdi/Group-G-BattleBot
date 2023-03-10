@@ -40,8 +40,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  gripperClose();
   leftMaze();
-
   delay(1000);
   
 }//end loop
@@ -53,8 +53,7 @@ void leftMaze(){
 
   if(distance > minDistance){
     Serial.println("ONWARDS");
-    moveForwards();
-    delay(1000);
+    moveToWall();
     stopRobot();
   }
 
@@ -97,6 +96,7 @@ void leftMaze(){
         
         Serial.println("BACKTRACK");
         turnAround();
+        delay(200);
         
       }//end if right
       
@@ -107,7 +107,7 @@ void leftMaze(){
 
 void rightMaze(){
   
-}
+}//end rightMaze
 
 int getDistance(){
   digitalWrite(trigPin, LOW); //clear the trig pin
@@ -124,25 +124,45 @@ int getDistance(){
   Serial.println(distance);
 
   return distance;
-}
+}//end getDistance
 
 void turnAround(){
-  digitalWrite(motorA1, LOW);
-  digitalWrite(motorA2, HIGH);
-  digitalWrite(motorB1, LOW);
-  digitalWrite(motorB2, LOW);
-
-  delay(500);
-
   digitalWrite(motorA1, LOW);
   digitalWrite(motorA2, LOW);
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, HIGH);
 
-  delay(500);
+  delay(775);
+
+  digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, HIGH);
+  digitalWrite(motorB1, LOW);
+  digitalWrite(motorB2, LOW);
+
+  delay(775);
+
+  moveForwards();
+  delay(300);
 
   stopRobot();
 }//end turnAround
+
+void moveToWall(){
+
+  sensorCenter();
+  moveForwards();
+  
+  distance = getDistance();
+  if(distance > 40){
+    delay(900);
+    stopRobot();
+  } else {
+    while(distance > 8){
+      distance = getDistance();
+    }//end while
+    stopRobot();
+  }//end if else
+}
 
 void stopRobot(){
   digitalWrite(motorA1, LOW);
@@ -152,11 +172,11 @@ void stopRobot(){
 }
 
 void moveForwards(){
-  digitalWrite(motorA1, LOW);
-  digitalWrite(motorA2, HIGH);
-  digitalWrite(motorB1, HIGH);
-  digitalWrite(motorB2, LOW);
-}
+  analogWrite(motorA1, 0);
+  analogWrite(motorA2, 255);
+  analogWrite(motorB1, 248);
+  analogWrite(motorB2, 0);
+}//end moveForwards
 
 void moveBackwards(){
   digitalWrite(motorA1, HIGH);
@@ -184,7 +204,7 @@ void gripperOpen(){
 }
 
 void gripperClose(){
-  gripper.write(41);
+  gripper.write(42);
 }
 
 void sensorLeft(){
