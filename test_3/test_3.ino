@@ -44,7 +44,7 @@ uint16_t sensorValues[SensorCount];
  ****************************************************************************/
 unsigned long previousMillis_1 = 0;
 
-const long interval_1 = 50000; //interval for first event (50sssssseconds)
+const long interval_1 = 5000; //interval for first event (5seconds)
 
 
 /****************************************************************************
@@ -52,7 +52,7 @@ const long interval_1 = 50000; //interval for first event (50sssssseconds)
  ****************************************************************************/
 
 // Which pin on the Arduino is connected to the NeoPixels?
-#define NEOPIN        3 // On Trinket or Gemma, suggest changing this to 1
+#define NEOPIN        10 // On Trinket or Gemma, suggest changing this to 1
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS 4 // Popular NeoPixel ring size
@@ -297,6 +297,36 @@ if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && se
   Serial.println("The amount is" + String(amount));
   
 
+//makes it stop at the end, but has the chance to drop the thing also at an intersection if all sensors see a line. 
+
+// if (amount > 4 && amount < 8){
+//  Forward();
+//  delay(50);
+//  }
+//
+//unsigned long currentMillis = millis();
+//
+//if(amount > 7 ){
+//  if(currentMillis - previousMillis_1 >= interval_1){
+//    Forward();
+//    delay(100);
+//    if (amount > 7){
+//      Stop();
+//      delay(500);
+//      gripperOpen();
+//      delay(500);
+//      Backward();
+//      delay(1000);
+//      gripperClosed = 0;  
+//      Stop();
+//      delay(99999);
+//    }    
+//  }
+//}
+
+
+// maybe i shoud try a for loop
+
  if (amount > 4 && amount < 8){
   Forward();
   delay(50);
@@ -304,17 +334,24 @@ if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && se
 
 unsigned long currentMillis = millis();
 
-if(amount > 7 ){
-  if(currentMillis - previousMillis_1 >= interval_1){
-    Stop();
-    delay(500);
-    gripperOpen();
-    delay(500);
-    Backward();
-    delay(1000);
-    gripperClosed = 0;  
-    Stop();
-    delay(99999);
+if(amount == 8 ){
+  
+    Motor(200, 200, 0, 0);
+    delay(400);
+    if (amount == 8){
+      if(currentMillis - previousMillis_1 >= interval_1){
+        Backward();
+        delay(200);
+        Stop();
+        delay(500);
+        gripperOpen();
+        delay(500);
+        Backward();
+        delay(1000);
+        gripperClosed = 0;  
+        Stop();
+        delay(99999);
+    }
   }
 }
 
@@ -470,54 +507,54 @@ if (amount < 4 || amount > 7){
   // to the count of pixels minus one.
   // pixels.Color() takes GRB values, from 0,0,0 up to 255,255,255
 
-//  if(cm<=1){
-//     neoBack();
-//     Motor(0, 0, 210, 200);
-//     delay(1000);
-//     
-//     neoForward();
-//     Stop();
-//     delay(200);
-//   
-//     neoLeft();
-//     delay(200);
-//
-//     neoForward();
-//     Motor(175, 0, 0, 150);
-//     delay(200); 
-//
-//     neoLeft();
-//     delay(200);
-// 
-//     neoForward();
-//     delay(200);
-// 
-//     neoLeft();
-//     delay(200);
-//  
-//     neoForward();
-//     delay(200);
-// 
-//     neoLeft();
-//     delay(200);
-//
-//     neoForward();
-//     delay(200);
-//
-//     neoLeft();
-//     delay(200);
-//
-//     neoForward();
-//     delay(200);
-//  
-//     neoLeft();
-//     delay(200);
-//     
-//     neoForward();
-//  }else{
-//    neoForward();
+  if(cm<=1){
+     neoBack();
+     Motor(0, 0, 210, 200);
+     delay(1000);
+     
+     neoForward();
+     Stop();
+     delay(200);
+   
+     neoLeft();
+     delay(200);
+
+     neoForward();
+     Motor(175, 0, 0, 150);
+     delay(200); 
+
+     neoLeft();
+     delay(200);
+ 
+     neoForward();
+     delay(200);
+ 
+     neoLeft();
+     delay(200);
+  
+     neoForward();
+     delay(200);
+ 
+     neoLeft();
+     delay(200);
+
+     neoForward();
+     delay(200);
+
+     neoLeft();
+     delay(200);
+
+     neoForward();
+     delay(200);
+  
+     neoLeft();
+     delay(200);
+     
+     neoForward();
+  }else{
+    neoForward();
 //    Motor(160, 150, 0, 0);
-//  }  
+  }  
 }
 
 /****************************************************************************
