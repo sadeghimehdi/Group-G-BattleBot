@@ -47,6 +47,9 @@ void loop() {
 }//end loop
 
 void leftMaze(){
+
+  boolean turn = false;
+  
   sensorCenter();
   delay(250);
   distance = getDistance();
@@ -67,6 +70,8 @@ void leftMaze(){
     turnLeft();
     delay(400);
     stopRobot();
+
+    turn = true;
     
   } else {
 
@@ -91,18 +96,30 @@ void leftMaze(){
         turnRight();
         delay(400);
         stopRobot();
+
+        turn = true;
         
       } else {
         
         Serial.println("BACKTRACK");
         turnAround();
         delay(200);
+
+        turn = true;
         
       }//end if right
       
     }//end if forward
     
   }//end if left
+
+  if(!turn){
+    isCentered();
+  }
+
+  tooLeft();
+  tooRight();
+  
 }//end leftMaze
 
 void rightMaze(){
@@ -147,22 +164,100 @@ void turnAround(){
   stopRobot();
 }//end turnAround
 
+void isCentered(){
+  sensorLeft();
+  delay(200);
+  int distanceLeft = getDistance();
+  sensorRight();
+  delay(200);
+  int distanceRight = getDistance();
+
+  int center = distanceLeft - distanceRight;
+
+  if(distanceLeft > 35 || distanceRight > 35){
+    //do nothing lol  
+  } else if (center < 0){
+    turnRight();
+    delay(90);
+    stopRobot();
+  } else if (center > 0){
+    turnLeft();
+    delay(90);
+    stopRobot();
+  }
+  
+}//end isCentered
+
+void tooLeft(){
+
+  sensorLeft();
+  delay(200);
+  int distanceLeft = getDistance();
+  
+  if (distanceLeft < 8){
+    turnRight();
+    delay(150);
+    stopRobot();
+  }
+  
+}
+
+void tooRight(){
+
+  sensorRight();
+  delay(200);
+  int distanceRight = getDistance();
+  
+  if (distanceRight < 8){
+    turnLeft();
+    delay(150);
+    stopRobot();
+  }
+  
+}
+
 void moveToWall(){
 
   sensorCenter();
-  moveForwards();
   
-  distance = getDistance();
-  if(distance > 40){
-    delay(900);
-    stopRobot();
-  } else {
+  if(distance40()){
     while(distance > 8){
+      moveForwards();
       distance = getDistance();
     }//end while
     stopRobot();
+  } else {
+    moveForwards();
+    delay(950);
+    stopRobot();
   }//end if else
-}
+  
+}//end movetowall
+
+boolean distance40(){
+  //because you cant measure more than 40cm in the maze due to interference
+  sensorCenter();
+  
+  int distance1 = getDistance();
+  moveForwards();
+  delay(300);
+  stopRobot();
+  delay(200);
+  int distance2 = getDistance();
+
+  int change = distance1-distance2;
+
+  moveBackwards();
+  delay(300);
+  stopRobot();
+
+  if(distance1 > 50 || distance2 > 50){
+    return false;
+  }//if distance is invalid
+
+  return change >= 4;
+  
+}//end distance40
 
 void stopRobot(){
   digitalWrite(motorA1, LOW);
@@ -179,10 +274,10 @@ void moveForwards(){
 }//end moveForwards
 
 void moveBackwards(){
-  digitalWrite(motorA1, HIGH);
-  digitalWrite(motorA2, LOW);
-  digitalWrite(motorB1, LOW);
-  digitalWrite(motorB2, HIGH);
+  analogWrite(motorB1, 0);
+  analogWrite(motorB2, 243);
+  analogWrite(motorA1, 255);
+  analogWrite(motorA2, 0);
 }
 
 void turnLeft(){
@@ -200,7 +295,7 @@ void turnRight(){
 }
 
 void gripperOpen(){
-  gripper.write(180); //instantly opens the gripper to the widest possible opening
+  gripper.write(140); //instantly opens the gripper to the widest possible opening
 }
 
 void gripperClose(){
@@ -209,12 +304,15 @@ void gripperClose(){
 
 void sensorLeft(){
   rotator.write(170); //90 degrees left
+  delay(200);
 }
 
 void sensorRight(){
   rotator.write(0); //90 degrees right
+  delay(200);
 }
 
 void sensorCenter(){
   rotator.write(80); //Centers the distance sensor
+  delay(200);
 }
