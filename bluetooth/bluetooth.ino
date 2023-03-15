@@ -1,29 +1,34 @@
 
-char junk;
-String inputString="";
+const int LED = 5;
 
-void setup()                    // run once, when the sketch starts
-{
- Serial.begin(9600);            // set the baud rate to 9600, same should be of your Serial Monitor
- pinMode(13, OUTPUT);
+char switchstate;
+
+void setup()
+  {
+Serial.begin(9600);
+pinMode(LED_BUILTIN, OUTPUT);
+
 }
+void loop() {//This code
+while(Serial.available()>0){ 
+ 
+switchstate = Serial.read();
 
-void loop()
-{
-  if(Serial.available()){
-  while(Serial.available())
-    {
-      char inChar = (char)Serial.read(); //read the input
-      inputString += inChar;        //make a string of the characters coming on serial
-    }
-    Serial.println(inputString);
-    while (Serial.available() > 0)  
-    { junk = Serial.read() ; }      // clear the serial buffer
-    if(inputString == "a"){         //in case of 'a' turn the LED on
-      Serial.write("Bluetooth is working");  
-    }else if(inputString == "b"){   //incase of 'b' turn the LED off
-      Serial.write("Bluetooth is working but it is off");
-    }
-    inputString = "";
-  }
+Serial.print(switchstate);
+
+Serial.print("\
+");
+delay(15);
+
+if(switchstate
+  == '1'){
+ Serial.write("connected with bluetooth1");
+ digitalWrite(LED_BUILTIN, HIGH);
+  
+}
+else if(switchstate == '0'){//Else,
+ Serial.write("connected with bluetooth0");
+ digitalWrite(LED_BUILTIN, LOW);
+}
+}
 }
