@@ -3,6 +3,11 @@
  * Look left, check distance, correct it somehow with the motors and steering and PWM
  * While moving forward set distance ^^^
  * 
+ * If too far right, slow down the left wheel
+ * Count a few pulses
+ * Resume normal movement
+ * (Vice versa for too far left)
+ * 
  * If while looking left, gap is detected
  * Move forward for x distance
  * Stop
@@ -11,17 +16,6 @@
  * 
  * If wall in front, proceed as normal (moveToWall)
  */
-
-
-
-#include <Servo.h>
-Servo gripper;
-Servo rotator;
-
-const int gripperPin = 12;
-const int rotatorPin = 13;
-int servoPos = 0;
-int rotatorPos = 0;
 
 const int motorA1 = 11; //Left motor, set to HIGH for backwards
 const int motorA2 = 10; //Left motor, Set to HIGH for forwards
@@ -34,7 +28,6 @@ const byte pulsePinRight = 2;  //Pin conneccted to right encoder
 
 unsigned long PulseCountLeft;
 unsigned long PulseCountRight;
-unsigned long quarterTurn = 38;
 
 // Timeout value looking for an encoder pulse
 const unsigned MaxPulseLength = 2000;
@@ -49,9 +42,7 @@ int minDistance = 20;
 
 void setup() {
   // put your setup code here, to run once:
-  gripper.attach(gripperPin);
-  rotator.attach(rotatorPin);
-
+  
   pinMode(motorA1, OUTPUT);
   pinMode(motorA2, OUTPUT);
   pinMode(pulsePinLeft, INPUT);
@@ -69,7 +60,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   gripperClose();
-  leftMaze();
+  leftMAze();
   delay(1000);
   
 }//end loop
@@ -101,48 +92,7 @@ void leftMaze(){
       stopRobot();
     }//end if else
     
-  } else {
-
-    Serial.println("Nothing left");
-    sensorCenter();
-    delay(250);
-    distance = getDistance();
-
-    if(distance > minDistance){
-      //do nothing
-      Serial.println("Nothing left to do");
-    } else {
-
-      Serial.println("Nothing center");
-      sensorRight();
-      delay(250);
-      distance = getDistance();
-
-      if(distance > minDistance){
-        
-        if(25 < distance && distance < 35){
-          //nothing
-        } else {
-          Serial.println("RIGHT");
-          turnRight();
-          waitUntilPulseCount(14);
-          stopRobot();
-        }//end if else
-        
-      } else {
-        
-        Serial.println("BACKTRACK");
-        turnAround();
-        delay(200);
-        
-      }//end if right
-      
-    }//end if forward
-    
-  }//end if left
-
-  tooLeft();
-  tooRight();
+  }
   
 }//end leftMaze
 
@@ -166,52 +116,6 @@ int getDistance(){
 
   return distance;
 }//end getDistance
-
-void turnAround(){
-  moveRightWheelBackwards();
-  waitUntilPulseCountRight(30);
-  stopRobot();
-
-  delay(100);
-
-  moveLeftWheelForwards();
-  waitUntilPulseCountLeft(30);
-  stopRobot();
-
-  delay(100);
-
-  moveForwards();
-  waitUntilPulseCount(20);
-  stopRobot();
-}//end turnAround
-
-void tooLeft(){
-
-  sensorLeft();
-  delay(200);
-  int distanceLeft = getDistance();
-  
-  if (distanceLeft < 10){
-    turnRight();
-    waitUntilPulseCount(3);
-    stopRobot();
-  }
-  
-}
-
-void tooRight(){
-
-  sensorRight();
-  delay(200);
-  int distanceRight = getDistance();
-  
-  if (distanceRight < 10){
-    turnLeft();
-    waitUntilPulseCount(3);
-    stopRobot();
-  }
-  
-}
 
 void moveToWall(){
 
@@ -412,27 +316,4 @@ void moveRightWheelForwards(){
 void moveRightWheelBackwards(){
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, HIGH);
-}
-
-void gripperOpen(){
-  gripper.write(130); //instantly opens the gripper to the widest possible opening
-}
-
-void gripperClose(){
-  gripper.write(50);
-}
-
-void sensorLeft(){
-  rotator.write(180); //90 degrees left
-  delay(200);
-}
-
-void sensorRight(){
-  rotator.write(0); //90 degrees right
-  delay(200);
-}
-
-void sensorCenter(){
-  rotator.write(80); //Centers the distance sensor
-  delay(200);
 }
