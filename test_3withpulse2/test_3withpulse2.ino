@@ -347,85 +347,29 @@ if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && se
  ****************************************************************************/
 
 
-//unsigned long currentMillisRight = millis();
-//
-//if(amount == 8 && theEnd == 0){
-//  if(currentMillisRight - previousMillis_1 >= interval_1){
-//    PulseCountRight = 0;   
-//    int previousPulseState = digitalRead(PulsePinRight);
-//    unsigned long lastPulseTime = millis();
-//    Motor(200,200,0,0);
-//    
-//    while (1)
-//    {
-//      Serial.println(PulseCountRight);
-//      int pulseState = digitalRead(PulsePinRight);
-//      
-//      if (pulseState != previousPulseState)
-//      {
-//        // State change
-//        previousPulseState = pulseState;
-//        PulseCountRight++;
-//        lastPulseTime = millis();
-//      }
-//      
-//      if (PulseCountRight == 7)
-//      {
-//        //stop after a set amount of pulses
-//        Serial.println("STOP AHHHH");
-//        theEnd = 1;
-//        return;
-//      }
-//    }
-//  }
-//}
-//
-//if(theEnd == 1 && amount == 8){
-//    Backward();
-//    delay(400);
-//    Stop();
-//    delay(500);
-//    gripperOpen();
-//    delay(500);
-//    Backward();
-//    delay(1000);
-//    gripperClosed = 0;  
-//    Stop();
-//    delay(99999);
-//}else if (theEnd == 1 && amount < 8)
-//{ 
-//  theEnd = 0;
-//}
-
-
-
-/****************************************************************************
- ***                              Pulse                                   ***
- ****************************************************************************/
- 
-unsigned long currentMillisLeft = millis();
+unsigned long currentMillisRight = millis();
 
 if(amount == 8 && theEnd == 0){
-  if(currentMillisLeft - previousMillis_1 >= interval_1){
-    PulseCountLeft = 0;   
-    int previousPulseStateLeft = digitalRead(PulsePinLeft);
-    unsigned long lastPulseTimeLeft = millis();
+  if(currentMillisRight - previousMillis_1 >= interval_1){
+    PulseCountRight = 0;   
+    int previousPulseState = digitalRead(PulsePinRight);
+    unsigned long lastPulseTime = millis();
     Motor(200,200,0,0);
     
     while (1)
     {
-      Serial.println(PulseCountLeft);
-      int pulseStateLeft = digitalRead(PulsePinLeft);
+      Serial.println(PulseCountRight);
+      int pulseState = digitalRead(PulsePinRight);
       
-      if (pulseStateLeft != previousPulseStateLeft)
+      if (pulseState != previousPulseState)
       {
         // State change
-        previousPulseStateLeft = pulseStateLeft;
-        PulseCountLeft++;
-        lastPulseTimeLeft = millis();
+        previousPulseState = pulseState;
+        PulseCountRight++;
+        lastPulseTime = millis();
       }
       
-      if (PulseCountLeft == 7)
+      if (PulseCountRight == 7)
       {
         //stop after a set amount of pulses
         Serial.println("STOP AHHHH");
@@ -451,7 +395,66 @@ if(theEnd == 1 && amount == 8){
 }else if (theEnd == 1 && amount < 8)
 { 
   theEnd = 0;
-}   
+}
+
+
+
+/****************************************************************************
+ ***                              Pulse   left                                ***
+ ****************************************************************************/
+ //in case i would like to use the left wheel sensor too, use these terms or whatever idk fuck it.
+
+
+ 
+//unsigned long currentMillisLeft = millis();
+//
+//if(amount == 8 && theEnd == 0){
+//  if(currentMillisLeft - previousMillis_1 >= interval_1){
+//    PulseCountLeft = 0;   
+//    int previousPulseStateLeft = digitalRead(PulsePinLeft);
+//    unsigned long lastPulseTimeLeft = millis();
+//    Motor(200,200,0,0);
+//    
+//    while (1)
+//    {
+//      Serial.println(PulseCountLeft);
+//      int pulseStateLeft = digitalRead(PulsePinLeft);
+//      
+//      if (pulseStateLeft != previousPulseStateLeft)
+//      {
+//        // State change
+//        previousPulseStateLeft = pulseStateLeft;
+//        PulseCountLeft++;
+//        lastPulseTimeLeft = millis();
+//      }
+//      
+//      if (PulseCountLeft == 7)
+//      {
+//        //stop after a set amount of pulses
+//        Serial.println("STOP AHHHH");
+//        theEnd = 1;
+//        return;
+//      }
+//    }
+//  }
+//}
+//
+//if(theEnd == 1 && amount == 8){
+//    Backward();
+//    delay(400);
+//    Stop();
+//    delay(500);
+//    gripperOpen();
+//    delay(500);
+//    Backward();
+//    delay(1000);
+//    gripperClosed = 0;  
+//    Stop();
+//    delay(99999);
+//}else if (theEnd == 1 && amount < 8)
+//{ 
+//  theEnd = 0;
+//}   
 
 
 
@@ -671,6 +674,18 @@ long microsecondsToInches(long microseconds) {
 long microsecondsToCentimeters(long microseconds) {
    return microseconds / 29 / 2;
 }
+
+/****************************************************************************
+ ***              Object avoidance With sonic and pulse                   ***
+ ****************************************************************************/
+
+//if(cm<=10){
+//  
+//  neoLeft();
+//
+//
+//
+//}
 
 /****************************************************************************
  ***                      Gripper                                         ***
