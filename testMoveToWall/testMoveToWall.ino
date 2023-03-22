@@ -17,6 +17,15 @@
  * If wall in front, proceed as normal (moveToWall)
  */
 
+#include <Servo.h>
+Servo gripper;
+Servo rotator;
+
+const int gripperPin = 12;
+const int rotatorPin = 13;
+int servoPos = 0;
+int rotatorPos = 0;
+
 const int motorA1 = 11; //Left motor, set to HIGH for backwards
 const int motorA2 = 10; //Left motor, Set to HIGH for forwards
 
@@ -37,11 +46,15 @@ const int echoPin = 8; //pin for receiving the sound
 
 long duration; //time the sound takes to travel
 long distance; //distance in cm, will be calculated from the duration
+long distanceLeft;
 
 int minDistance = 20;
 
 void setup() {
   // put your setup code here, to run once:
+
+  gripper.attach(gripperPin);
+  rotator.attach(rotatorPin);
   
   pinMode(motorA1, OUTPUT);
   pinMode(motorA2, OUTPUT);
@@ -59,46 +72,10 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  gripperClose();
-  leftMAze();
-  delay(1000);
+  
+  hugLeftWall();
   
 }//end loop
-
-void leftMaze(){
-  
-  sensorCenter();
-  delay(250);
-  distance = getDistance();
-
-  if(distance > 12){
-    Serial.println("ONWARDS");
-    moveToWall();
-    stopRobot();
-  }
-
-  sensorLeft();
-  delay(250);
-  distance = getDistance();
-  
-  if(distance > minDistance){
-    
-    if(25 < distance && distance < 35){
-      //nothing
-    } else {
-      Serial.println("HARD TO PORT");
-      turnLeft();
-      waitUntilPulseCount(13);
-      stopRobot();
-    }//end if else
-    
-  }
-  
-}//end leftMaze
-
-void rightMaze(){
-  
-}//end rightMaze
 
 int getDistance(){
   digitalWrite(trigPin, LOW); //clear the trig pin
@@ -117,24 +94,57 @@ int getDistance(){
   return distance;
 }//end getDistance
 
+void hugLeftWall(){
+
+  sensorLeft();
+  delay(250);
+  distanceLeft = getDistance;
+  
+  while(distanceLeft < 30){
+    moveForwards();
+    distanceLeft = getDistance();
+    if(distanceLeft < 8){
+      slowRightWheel();
+      waitUntilPulseCountRight(8);
+      moveForwards();
+    } else if (distanceLeft > 18){
+      slowLeftWheel();
+      waitUntilPulseCountLeft(8);
+      moveForwards();
+    }//end if else
+  }//end while
+    
+  stopRobot();
+  
+}
+
 void moveToWall(){
 
   sensorCenter();
+  delay(200);
   distance = getDistance();
   int lastDistance;
   int counter = 0;
   
   if(distance < 35){
     while(distance > 10){
+      
       lastDistance = distance;
       moveForwards();
+      
       distance = getDistance();
       if(distance == lastDistance){
         counter++;
         if(counter > 5){
+          
           moveBackwards();
           delay(300);
           stopRobot();
+          delay(100);
+          turnLeft();
+          waitUntilPulseCount(5);
+          stopRobot();
+          
         }//end if
       } else {
         counter = 0;
@@ -142,9 +152,17 @@ void moveToWall(){
     }//end while
     stopRobot();
   } else {
-    moveForwards();
-    waitUntilPulseCount(50);
+
+    sensorLeft();
+    delay(250);
+    distance = getDistance;
+    while(distance < 30){
+      moveForwards();
+      
+    }
+    
     stopRobot();
+    
   }//end if else
   
 }//end movetowall
@@ -316,4 +334,29 @@ void moveRightWheelForwards(){
 void moveRightWheelBackwards(){
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, HIGH);
+}
+
+void slowLeftWheel(){
+  analogWrite(motorA1, 0);
+  analogWrite(motorA2, 200);
+}
+
+void slowRightWheel(){
+  analogWrite(motorB1, 200);
+  analogWrite(motorB2, 0);
+}
+
+void sensorLeft(){
+  rotator.write(180); //90 degrees left
+  delay(200);
+}
+
+void sensorRight(){
+  rotator.write(0); //90 degrees right
+  delay(200);
+}
+
+void sensorCenter(){
+  rotator.write(80); //Centers the distance sensor
+  delay(200);
 }

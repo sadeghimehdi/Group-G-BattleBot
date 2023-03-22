@@ -53,21 +53,18 @@ void setup() {
   pinMode(echoPin, INPUT); // input, since the echo tells the arduino how long it was on for
 
   Serial.begin(9600); //to output the distance to the console
-}
+}//end setup
 
 void loop() {
   // put your main code here, to run repeatedly:
   gripperClose();
   leftMaze();
-  delay(1000);
+  delay(500);
   
 }//end loop
 
 void leftMaze(){
 
-  leftWall = false;
-  rightWall = false;
-  
   sensorCenter();
   delay(250);
   distance = getDistance();
@@ -84,14 +81,10 @@ void leftMaze(){
   
   if(distance > minDistance){
     
-    if(25 < distance && distance < 35){
-      leftWall = true;
-    } else {
-      Serial.println("HARD TO PORT");
-      turnLeft();
-      waitUntilPulseCount(13);
-      stopRobot();
-    }//end if else
+    Serial.println("HARD TO PORT");
+    turnLeft();
+    waitUntilPulseCount(13);
+    stopRobot();
     
   } else {
 
@@ -112,14 +105,10 @@ void leftMaze(){
 
       if(distance > minDistance){
         
-        if(25 < distance && distance < 35){
-          rightWall = true;
-        } else {
-          Serial.println("RIGHT");
-          turnRight();
-          waitUntilPulseCount(14);
-          stopRobot();
-        }//end if else
+        Serial.println("RIGHT");
+        turnRight();
+        waitUntilPulseCount(14);
+        stopRobot();
         
       } else {
         
@@ -132,13 +121,6 @@ void leftMaze(){
     }//end if forward
     
   }//end if left
-
-  if(rightWall && leftWall){
-    Serial.println("HARD TO PORT");
-    turnLeft();
-    waitUntilPulseCount(13);
-    stopRobot();
-  }
 
   tooLeft();
   tooRight();
@@ -220,26 +202,40 @@ void moveToWall(){
   int counter = 0;
   
   if(distance < 35){
-    while(distance > 10){
+    
+    while(distance > 9){
+      
       lastDistance = distance;
       moveForwards();
+      
       distance = getDistance();
       if(distance == lastDistance){
         counter++;
         if(counter > 5){
+          
           moveBackwards();
           delay(300);
           stopRobot();
+          delay(100);
+          turnLeft();
+          waitUntilPulseCount(5);
+          stopRobot();
+          
         }//end if
       } else {
         counter = 0;
       }//end if else
+      
     }//end while
+    
     stopRobot();
+    
   } else {
+    
     moveForwards();
     waitUntilPulseCount(50);
     stopRobot();
+    
   }//end if else
   
 }//end movetowall
@@ -370,6 +366,11 @@ void moveForwards(){
   digitalWrite(motorA2, HIGH);
   digitalWrite(motorB1, HIGH);
   digitalWrite(motorB2, LOW);
+
+  analogWrite(motorA1, 0);
+  analogWrite(motorA2, 200);
+  analogWrite(motorB1, 190);
+  analogWrite(motorB2, 0);
 }
 
 void moveBackwards(){
@@ -377,6 +378,11 @@ void moveBackwards(){
   digitalWrite(motorA2, LOW);
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, HIGH);
+
+  analogWrite(motorA1, 200);
+  analogWrite(motorA2, 0);
+  analogWrite(motorB1, 0);
+  analogWrite(motorB2, 190);
 }
 
 void turnLeft(){
@@ -384,6 +390,11 @@ void turnLeft(){
   digitalWrite(motorA2, LOW);
   digitalWrite(motorB1, HIGH);
   digitalWrite(motorB2, LOW);
+
+  analogWrite(motorA1, 200);
+  analogWrite(motorA2, 0);
+  analogWrite(motorB1, 200);
+  analogWrite(motorB2, 0);
 }
 
 void turnRight(){
@@ -391,26 +402,43 @@ void turnRight(){
   digitalWrite(motorA2, HIGH);
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, HIGH);
+
+  analogWrite(motorA1, 0);
+  analogWrite(motorA2, 200);
+  analogWrite(motorB1, 0);
+  analogWrite(motorB2, 200);
 }
 
 void moveLeftWheelForwards(){
   digitalWrite(motorA1, LOW);
   digitalWrite(motorA2, HIGH);
+
+  analogWrite(motorA1, 0);
+  analogWrite(motorA2, 150);
 }
 
 void moveLeftWheelBackwards(){
   digitalWrite(motorA1, HIGH);
   digitalWrite(motorA2, LOW);
+
+  analogWrite(motorA1, 150);
+  analogWrite(motorA2, 0);
 }
 
 void moveRightWheelForwards(){
   digitalWrite(motorB1, HIGH);
   digitalWrite(motorB2, LOW);
+
+  analogWrite(motorB1, 150);
+  analogWrite(motorB2, 0);
 }
 
 void moveRightWheelBackwards(){
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, HIGH);
+
+  analogWrite(motorB1, 0);
+  analogWrite(motorB2, 150);
 }
 
 void gripperOpen(){
