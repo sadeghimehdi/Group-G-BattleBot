@@ -602,6 +602,28 @@ if(theEnd == 1 && amount == 8){
 
     Serial.println();
   //  delay(250);
+
+
+//replace these with the pulse sensor stuff EPICC
+if(cm < 15){
+  Right();
+  delay(650);
+  Forward();
+  delay(1000);
+  Left();
+  delay(700);
+  Forward();
+  delay(1000);
+  Left();
+  delay(700);
+  Forward();
+  delay(1400);
+  Right();
+  delay(200);
+}
+
+
+  
   
    
 /****************************************************************************
