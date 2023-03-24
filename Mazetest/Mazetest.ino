@@ -26,12 +26,6 @@ long distance; //distance in cm, will be calculated from the duration
 
 int minDistance = 28;
 
-//variables for special case
-//if the robot is in the middle of 2 grid sections and there are walls on both sides
-//temp fix until moveToWall works
-boolean rightWall;
-boolean leftWall;
-
 void setup() {
   // put your setup code here, to run once:
   pinMode(gripperPin, OUTPUT);
