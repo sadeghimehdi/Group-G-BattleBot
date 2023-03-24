@@ -4,6 +4,7 @@
 Servo gripper; 
 const int gripperPin = 2;
 int gripperClosed = 0;
+int duhh = 0;
 int servoPos = 5;
 /****************************************************************************
  ***                          Line Sensor                                 ***
@@ -564,19 +565,26 @@ if(theEnd == 1 && amount == 8){
 
   else if(sensorValues[3] > 600 && sensorValues[4] > 600){
 //    Forward();
-    Motor(170, 170, 0, 0);
+//    Motor(170, 170, 0, 0);
+    Motor(250, 250, 0, 0);
     Serial.print("go forward");
-  //  lastSensor = NULL;
+//    lastSensor = NULL;
     } 
     
   else if(sensorValues[3] > 600 && sensorValues[4] < 600){
-    Motor(170, 180, 0, 0);
+//    Motor(170, 180, 0, 0);
+  Motor(240, 250, 0, 0);
+//    Forward();
+
     Serial.print("go forwardish");
     lastSensor = 3;
   }
   
   else if(sensorValues[4] > 600 && sensorValues[3] < 600){
-    Motor(180, 170, 0, 0);
+//    Motor(180, 170, 0, 0);
+        Motor(250, 240, 0, 0);
+//    Forward();
+
     Serial.print("go forwardish");
     lastSensor = 4;
     }
@@ -617,10 +625,12 @@ if(cm < 15){
   Left();
   delay(700);
   Forward();
-  delay(1400);
+  delay(1300);
   Right();
   delay(200);
+
 }
+
 
 
   
