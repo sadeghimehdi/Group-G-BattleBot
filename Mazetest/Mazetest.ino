@@ -1,7 +1,3 @@
-#include <Servo.h>
-Servo gripper;
-Servo rotator;
-
 const int gripperPin = 12;
 const int rotatorPin = 13;
 int servoPos = 0;
@@ -28,7 +24,7 @@ const int echoPin = 8; //pin for receiving the sound
 long duration; //time the sound takes to travel
 long distance; //distance in cm, will be calculated from the duration
 
-int minDistance = 20;
+int minDistance = 28;
 
 //variables for special case
 //if the robot is in the middle of 2 grid sections and there are walls on both sides
@@ -38,8 +34,8 @@ boolean leftWall;
 
 void setup() {
   // put your setup code here, to run once:
-  gripper.attach(gripperPin);
-  rotator.attach(rotatorPin);
+  pinMode(gripperPin, OUTPUT);
+  pinMode(rotatorPin, OUTPUT);
 
   pinMode(motorA1, OUTPUT);
   pinMode(motorA2, OUTPUT);
@@ -55,6 +51,13 @@ void setup() {
   Serial.begin(9600); //to output the distance to the console
 }//end setup
 
+void wait(int milliseconds){
+  int time = millis();
+  while(millis() < time + milliseconds){
+    //do nothing
+  }
+}
+
 void loop() {
   // put your main code here, to run repeatedly:
   gripperClose();
@@ -66,31 +69,31 @@ void loop() {
 void leftMaze(){
 
   sensorCenter();
-  delay(250);
+  delay(500);
   distance = getDistance();
 
-  if(distance > 12){
+  if(distance > 8){
     Serial.println("ONWARDS");
     moveToWall();
     stopRobot();
   }
 
   sensorLeft();
-  delay(250);
+  delay(500);
   distance = getDistance();
   
   if(distance > minDistance){
     
     Serial.println("HARD TO PORT");
     turnLeft();
-    waitUntilPulseCount(13);
+    waitUntilPulseCount(16);
     stopRobot();
     
   } else {
 
     Serial.println("Nothing left");
     sensorCenter();
-    delay(250);
+    delay(500);
     distance = getDistance();
 
     if(distance > minDistance){
@@ -100,14 +103,14 @@ void leftMaze(){
 
       Serial.println("Nothing center");
       sensorRight();
-      delay(250);
+      delay(500);
       distance = getDistance();
 
       if(distance > minDistance){
         
         Serial.println("RIGHT");
         turnRight();
-        waitUntilPulseCount(14);
+        waitUntilPulseCount(15);
         stopRobot();
         
       } else {
@@ -156,7 +159,7 @@ void turnAround(){
   delay(100);
 
   moveLeftWheelForwards();
-  waitUntilPulseCountLeft(30);
+  waitUntilPulseCountLeft(40);
   stopRobot();
 
   delay(100);
@@ -174,7 +177,7 @@ void tooLeft(){
   
   if (distanceLeft < 10){
     turnRight();
-    waitUntilPulseCount(3);
+    waitUntilPulseCount(5);
     stopRobot();
   }
   
@@ -188,7 +191,7 @@ void tooRight(){
   
   if (distanceRight < 10){
     turnLeft();
-    waitUntilPulseCount(3);
+    waitUntilPulseCount(5);
     stopRobot();
   }
   
@@ -201,9 +204,9 @@ void moveToWall(){
   int lastDistance;
   int counter = 0;
   
-  if(distance < 35){
+  if(distance < 40){
     
-    while(distance > 9){
+    while(distance > 8){
       
       lastDistance = distance;
       moveForwards();
@@ -211,15 +214,17 @@ void moveToWall(){
       distance = getDistance();
       if(distance == lastDistance){
         counter++;
-        if(counter > 5){
+        Serial.println(counter);
+        if(counter > 10){
           
           moveBackwards();
-          delay(300);
+          waitUntilPulseCount(20);
           stopRobot();
           delay(100);
-          turnLeft();
-          waitUntilPulseCount(5);
-          stopRobot();
+          tooLeft();
+          tooRight();
+
+          counter = 0;
           
         }//end if
       } else {
@@ -233,7 +238,7 @@ void moveToWall(){
   } else {
     
     moveForwards();
-    waitUntilPulseCount(50);
+    waitUntilPulseCount(40);
     stopRobot();
     
   }//end if else
@@ -270,7 +275,7 @@ void waitUntilPulseCount(unsigned long count){
       previousPulseStateRight = pulseStateRight;
       PulseCountRight++;
       lastPulseTime = millis();
-      if (PulseCountRight >= count+1){
+      if (PulseCountRight >= count){
         PulseCountRight = 0;
         right = true;
         analogWrite(motorB1, 0);
@@ -369,7 +374,7 @@ void moveForwards(){
 
   analogWrite(motorA1, 0);
   analogWrite(motorA2, 200);
-  analogWrite(motorB1, 190);
+  analogWrite(motorB1, 200);
   analogWrite(motorB2, 0);
 }
 
@@ -382,7 +387,7 @@ void moveBackwards(){
   analogWrite(motorA1, 200);
   analogWrite(motorA2, 0);
   analogWrite(motorB1, 0);
-  analogWrite(motorB2, 190);
+  analogWrite(motorB2, 200);
 }
 
 void turnLeft(){
@@ -414,14 +419,14 @@ void moveLeftWheelForwards(){
   digitalWrite(motorA2, HIGH);
 
   analogWrite(motorA1, 0);
-  analogWrite(motorA2, 150);
+  analogWrite(motorA2, 200);
 }
 
 void moveLeftWheelBackwards(){
   digitalWrite(motorA1, HIGH);
   digitalWrite(motorA2, LOW);
 
-  analogWrite(motorA1, 150);
+  analogWrite(motorA1, 200);
   analogWrite(motorA2, 0);
 }
 
@@ -429,7 +434,7 @@ void moveRightWheelForwards(){
   digitalWrite(motorB1, HIGH);
   digitalWrite(motorB2, LOW);
 
-  analogWrite(motorB1, 150);
+  analogWrite(motorB1, 200);
   analogWrite(motorB2, 0);
 }
 
@@ -438,28 +443,55 @@ void moveRightWheelBackwards(){
   digitalWrite(motorB2, HIGH);
 
   analogWrite(motorB1, 0);
-  analogWrite(motorB2, 150);
+  analogWrite(motorB2, 200);
 }
 
 void gripperOpen(){
-  gripper.write(130); //instantly opens the gripper to the widest possible opening
+  for(int i = 0;i < 4; i++){
+    digitalWrite(gripperPin, HIGH);
+    delayMicroseconds(1600); // Duration of the pulse in microseconds
+    digitalWrite(gripperPin, LOW);
+    // Pulses duration: 1600 = open
+    delay(20);
+  }
 }
 
 void gripperClose(){
-  gripper.write(50);
-}
-
-void sensorLeft(){
-  rotator.write(180); //90 degrees left
-  delay(200);
+  for(int i = 0;i < 4; i++){
+    digitalWrite(gripperPin, HIGH);
+    delayMicroseconds(1010); // Duration of the pulse in microseconds
+    digitalWrite(gripperPin, LOW);
+    // Pulses duration: 1000 = fully closed
+    delay(20);
+  }
 }
 
 void sensorRight(){
-  rotator.write(0); //90 degrees right
-  delay(200);
+  for(int i = 0;i < 4; i++){
+    digitalWrite(rotatorPin, HIGH);
+    delayMicroseconds(350); // Duration of the pusle in microseconds
+    digitalWrite(rotatorPin, LOW);
+    //Pulse duration: 350ms = 0 degrees
+    delay(20);
+  }
+}
+
+void sensorLeft(){
+  for(int i = 0;i < 4; i++){
+    digitalWrite(rotatorPin, HIGH);
+    delayMicroseconds(2310); // Duration of the pusle in microseconds
+    digitalWrite(rotatorPin, LOW);
+    //Pulse duration: 2310ms - 180deg
+    delay(20);
+  }
 }
 
 void sensorCenter(){
-  rotator.write(80); //Centers the distance sensor
-  delay(200);
+  for(int i = 0;i < 4; i++){
+    digitalWrite(rotatorPin, HIGH);
+    delayMicroseconds(1310); // Duration of the pusle in microseconds
+    digitalWrite(rotatorPin, LOW);
+    //Pulse duration: 1310ms = 90 degrees
+    delay(20);
+  }
 }
