@@ -635,54 +635,54 @@ if(cm < 15){
   // to the count of pixels minus one.
   // pixels.Color() takes GRB values, from 0,0,0 up to 255,255,255
 
-  if(cm<=1){
-     neoBack();
-     Motor(0, 0, 210, 200);
-     delay(1000);
-     
-     neoForward();
-     Stop();
-     delay(200);
-   
-     neoLeft();
-     delay(200);
-
-     neoForward();
-     Motor(175, 0, 0, 150);
-     delay(200); 
-
-     neoLeft();
-     delay(200);
- 
-     neoForward();
-     delay(200);
- 
-     neoLeft();
-     delay(200);
-  
-     neoForward();
-     delay(200);
- 
-     neoLeft();
-     delay(200);
-
-     neoForward();
-     delay(200);
-
-     neoLeft();
-     delay(200);
-
-     neoForward();
-     delay(200);
-  
-     neoLeft();
-     delay(200);
-     
-     neoForward();
-  }else{
-    neoForward();
-//    Motor(160, 150, 0, 0);
-  }  
+//  if(cm<=1){
+//     neoBack();
+//     Motor(0, 0, 210, 200);
+//     delay(1000);
+//     
+//     neoForward();
+//     Stop();
+//     delay(200);
+//   
+//     neoLeft();
+//     delay(200);
+//
+//     neoForward();
+//     Motor(175, 0, 0, 150);
+//     delay(200); 
+//
+//     neoLeft();
+//     delay(200);
+// 
+//     neoForward();
+//     delay(200);
+// 
+//     neoLeft();
+//     delay(200);
+//  
+//     neoForward();
+//     delay(200);
+// 
+//     neoLeft();
+//     delay(200);
+//
+//     neoForward();
+//     delay(200);
+//
+//     neoLeft();
+//     delay(200);
+//
+//     neoForward();
+//     delay(200);
+//  
+//     neoLeft();
+//     delay(200);
+//     
+//     neoForward();
+//  }else{
+//    neoForward();
+////    Motor(160, 150, 0, 0);
+//  }  
 }
 
 /****************************************************************************
