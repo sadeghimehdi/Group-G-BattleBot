@@ -231,7 +231,7 @@ void moveToWall(){
       moveForwards();
       
       distance = getDistance();
-      if(distance == lastDistance || distance == lastDistance-1 || distance == lastDistance+1){
+      if(distance == lastDistance || distance == lastDistance+1){
         counter++;
         Serial.println(counter);
         if(counter > 10){
@@ -248,6 +248,8 @@ void moveToWall(){
 
           counter = 0;
           
+          sensorCenter();
+          
         }//end if
       } else {
         counter = 0;
@@ -261,7 +263,7 @@ void moveToWall(){
   } else {
     
     moveForwards();
-    waitUntilPulseCount(40);
+    waitUntilPulseCount(50);
     stopRobot();
     
   }//end if else
