@@ -897,8 +897,8 @@ delay(1000);
 //Motor(250,0,0,250);
 //delay(500);
 //Motor(250,250,0,0);
-//delay(1100);
-//if(lastSensor > 3){ Right();} else if(<4){Right();} 
+//delay(1000);
+//if(lastSensor > 3){ Right();} else if(<4){Right();} else {Forward();} 
 
 
    
