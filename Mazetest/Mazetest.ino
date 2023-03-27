@@ -225,7 +225,7 @@ void moveToWall(){
   
   if(distance < 40){
     
-    while(distance > 8){
+    while(distance > 8 && distance < 40){
       
       lastDistance = distance;
       moveForwards();
