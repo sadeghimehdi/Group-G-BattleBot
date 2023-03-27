@@ -56,11 +56,12 @@ void loop() {
 
 void leftMaze(){
 
-  sensorCenter();
-  delay(500);
-  distance = getDistance();
-
   if(programStart){
+    sensorCenter();
+    delay(500);
+    distance = getDistance();
+
+  
     if(distance > 8){
       Serial.println("ONWARDS");
       moveToWall();
@@ -71,7 +72,7 @@ void leftMaze(){
   programStart = true;
 
   sensorLeft();
-  delay(300);
+  delay(500);
   distance = getDistance();
   
   if(distance > minDistance){
@@ -85,7 +86,7 @@ void leftMaze(){
 
     Serial.println("Nothing left");
     sensorCenter();
-    delay(300);
+    delay(500);
     distance = getDistance();
 
     if(distance > 8){
@@ -95,7 +96,7 @@ void leftMaze(){
 
       Serial.println("Nothing center");
       sensorRight();
-      delay(300);
+      delay(500);
       distance = getDistance();
 
       if(distance > minDistance){
@@ -109,7 +110,7 @@ void leftMaze(){
         
         Serial.println("BACKTRACK");
         turnAround();
-        delay(200);
+        delay(100);
         
       }//end if right
       
@@ -144,6 +145,15 @@ int getDistance(){
 }//end getDistance
 
 void turnAround(){
+
+  sensorLeft();
+  delay(500);
+  int distanceLeft = getDistance();
+
+  sensorRight();
+  delay(500);
+  int distanceRight = getDistance();
+  
   if(distanceLeft > distanceRight){
 
     moveLeftWheelBackwards();
@@ -180,7 +190,7 @@ void turnAround(){
 void tooLeft(){
 
   sensorLeft();
-  delay(200);
+  delay(500);
   int distanceLeft = getDistance();
   
   if (distanceLeft < 8){
@@ -194,7 +204,7 @@ void tooLeft(){
 void tooRight(){
 
   sensorRight();
-  delay(300);
+  delay(500);
   int distanceRight = getDistance();
   
   if (distanceRight < 8){
@@ -208,6 +218,7 @@ void tooRight(){
 void moveToWall(){
 
   sensorCenter();
+  delay(500);
   distance = getDistance();
   int lastDistance;
   int counter = 0;
@@ -220,7 +231,7 @@ void moveToWall(){
       moveForwards();
       
       distance = getDistance();
-      if(distance == lastDistance){
+      if(distance == lastDistance || distance == lastDistance-1 || distance == lastDistance+1){
         counter++;
         Serial.println(counter);
         if(counter > 10){
@@ -229,6 +240,9 @@ void moveToWall(){
           waitUntilPulseCount(20);
           stopRobot();
           delay(100);
+          moveBackwards();
+          delay(300);
+          stopRobot();
           tooLeft();
           tooRight();
 
@@ -238,6 +252,7 @@ void moveToWall(){
       } else {
         counter = 0;
       }//end if else
+      delay(20);
       
     }//end while
     
