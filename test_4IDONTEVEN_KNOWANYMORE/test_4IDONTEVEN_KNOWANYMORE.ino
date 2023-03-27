@@ -29,6 +29,12 @@ int servoPos = 5;
 // 0 before being lost. 5000 means the line is directly under sensor 5 or was
 // last seen by sensor 5 before being lost.
 
+
+
+
+
+
+
 QTRSensors qtr;
 const uint8_t SensorCount = 8;
 uint16_t sensorValues[SensorCount];
@@ -300,107 +306,6 @@ if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && se
   Serial.println("The amount is" + String(amount));
   
 
-
-
-
-
-
-/****************************************************************************
- ***                      Sonic Sensor(distance)                          ***
- ****************************************************************************/
- long duration, inches, cm;
-   pinMode(pingPin, OUTPUT);
-   digitalWrite(pingPin, LOW);
-//   delayMicroseconds(2);
-   digitalWrite(pingPin, HIGH);
-//   delayMicroseconds(10);
-   digitalWrite(pingPin, LOW);
-   pinMode(echoPin, INPUT);
-   duration = pulseIn(echoPin, HIGH);
-   inches = microsecondsToInches(duration);
-   cm = microsecondsToCentimeters(duration);
-//   Serial.print(inches);
-//   Serial.print("in, ");
-//   Serial.print(cm);
-//   Serial.print("cm");
-
-    Serial.println();
-
-
-
-
-
-
-//
-//unsigned long currentMillisRight = millis();
-//
-//
-//if(cm < 15){
-//if(currentMillisRight - previousMillis_1 >= interval_1){
-//    PulseCountRight = 0;  
-//    
-//PulseCountLeft = 0;   
-//    int previousPulseStateLeft = digitalRead(PulsePinLeft);
-//    unsigned long lastPulseTimeLeft = millis(); 
-//    int previousPulseStateRight = digitalRead(PulsePinRight);
-//    unsigned long lastPulseTime = millis();
-//
-//     Motor(0,250,0,0);
-//    while (1)
-//    {
-//   
-//      Serial.println(PulseCountRight);
-//      int pulseStateRight = digitalRead(PulsePinRight);
-//      
-//      Serial.println(PulseCountLeft);
-//      int pulseStateLeft = digitalRead(PulsePinLeft);
-//      
-//      if (pulseStateLeft != previousPulseStateLeft)
-//      {
-//        // State change
-//        previousPulseStateLeft = pulseStateLeft;
-//        PulseCountLeft++;
-//        lastPulseTimeLeft = millis();
-//      }
-//      if (pulseStateRight != previousPulseStateRight)
-//      {
-//        // State change
-//        previousPulseStateRight = pulseStateRight;
-//        PulseCountRight++;
-//        lastPulseTime = millis();
-//      }
-//      
-//      if (PulseCountRight == 10)
-//      {
-//        //stop after a set amount of pulses
-//        Serial.println("straight AHHHH");
-//        Motor(250, 250, 0, 0);
-//      }
-//
-//      if (PulseCountLeft == 60)
-//      {
-//        Serial.println("straight AHHHH");
-//        Motor(250, 0, 0, 0);
-//      }
-//      
-//      if (PulseCountRight == 60)
-//      {
-//        Serial.println("straight AHHHH");
-//        Motor(250, 250, 0, 0);
-//        return;
-//      }
-//  
-//    } //right 60  left 60
-//  }
-//}
-
-
-
-
-
-
-
-
 //makes it stop at the end, but has the chance to drop the thing also at an intersection if all sensors see a line. 
 
 // if (amount > 4 && amount < 8){
@@ -438,188 +343,13 @@ if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && se
 
 
 
-
-
-
-/****************************************************************************
- ***              Object avoidance With sonic and pulse                   ***
- ****************************************************************************/
-
-//if(cm < 15 && duhh == 0){
-//  duhh = 9;
-//}
-//
-//  if(duhh == 9){
-//if(currentMillisRight - previousMillis_1 >= interval_1){
-//    PulseCountRight = 0;   
-//    int previousPulseState = digitalRead(PulsePinRight);
-//    unsigned long lastPulseTime = millis();
-//    
-//    while (1)
-//    {
-//    Motor(0,250,250,0);
-//      Serial.println(PulseCountRight);
-//      int pulseState = digitalRead(PulsePinRight);
-//      
-//      if (pulseState != previousPulseState)
-//      {
-//        // State change
-//        previousPulseState = pulseState;
-//        PulseCountRight++;
-//        lastPulseTime = millis();
-//      }
-//      
-//      if (PulseCountRight == 10)
-//      {
-//        //stop after a set amount of pulses
-//        Serial.println("STOP AHHHH");
-//        duhh = 1;
-//        return;
-//      }
-//    }
-//  }
-//}
-//
-//if(duhh == 1){
-//if(currentMillisRight - previousMillis_1 >= interval_1){
-//    PulseCountRight = 0;   
-//    int previousPulseState = digitalRead(PulsePinRight);
-//    unsigned long lastPulseTime = millis();
-//
-//    
-//    while (1)
-//    {
-//    Motor(250,250,0,0);
-//      Serial.println(PulseCountRight);
-//      int pulseState = digitalRead(PulsePinRight);
-//      
-//      if (pulseState != previousPulseState)
-//      {
-//        // State change
-//        previousPulseState = pulseState;
-//        PulseCountRight++;
-//        lastPulseTime = millis();
-//      }
-//      
-//      if (PulseCountRight == 50)
-//      {
-//        //stop after a set amount of pulses
-//        Serial.println("STOP AHHHH");
-//        duhh = 2;
-//        return;
-//      }
-//    }
-//  }
-//}
-//
-//if(duhh == 2){
-//if(currentMillisRight - previousMillis_1 >= interval_1){
-//    PulseCountRight = 0;   
-//    int previousPulseState = digitalRead(PulsePinRight);
-//    unsigned long lastPulseTime = millis();
-////    Motor(200,200,0,0);
-//    
-//    while (1)
-//    {
-//    Motor(250,0,0,250);
-//      Serial.println(PulseCountRight);
-//      int pulseState = digitalRead(PulsePinRight);
-//      
-//      if (pulseState != previousPulseState)
-//      {
-//        // State change
-//        previousPulseState = pulseState;
-//        PulseCountRight++;
-//        lastPulseTime = millis();
-//      }
-//      
-//      if (PulseCountRight == 10)
-//      {
-//        //stop after a set amount of pulses
-//        Serial.println("STOP AHHHH");
-//        duhh = 3;
-//        return;
-//      }
-//    }
-//  }
-//}
-//
-//if(duhh == 3){
-//if(currentMillisRight - previousMillis_1 >= interval_1){
-//    PulseCountRight = 0;   
-//    int previousPulseState = digitalRead(PulsePinRight);
-//    unsigned long lastPulseTime = millis();
-////    Motor(200,200,0,0);
-//    
-//    while (1)
-//    {
-//    Motor(250,250,0,0);
-//      Serial.println(PulseCountRight);
-//      int pulseState = digitalRead(PulsePinRight);
-//      
-//      if (pulseState != previousPulseState)
-//      {
-//        // State change
-//        previousPulseState = pulseState;
-//        PulseCountRight++;
-//        lastPulseTime = millis();
-//      }
-//      
-//      if (PulseCountRight == 50)
-//      {
-//        //stop after a set amount of pulses
-//        Serial.println("STOP AHHHH");
-//        duhh = 4;
-//        return;
-//      }
-//    }
-//  }
-//}
-//
-//  if(duhh == 4){
-//if(currentMillisRight - previousMillis_1 >= interval_1){
-//    PulseCountRight = 0;   
-//    int previousPulseState = digitalRead(PulsePinRight);
-//    unsigned long lastPulseTime = millis();
-////    Motor(200,200,0,0);
-//    
-//    while (1)
-//    {
-//    Motor(0,250,250,0);
-//      Serial.println(PulseCountRight);
-//      int pulseState = digitalRead(PulsePinRight);
-//      
-//      if (pulseState != previousPulseState)
-//      {
-//        // State change
-//        previousPulseState = pulseState;
-//        PulseCountRight++;
-//        lastPulseTime = millis();
-//      }
-//      
-//      if (PulseCountRight == 10)
-//      {
-//        //stop after a set amount of pulses
-//        Serial.println("STOP AHHHH");
-//        duhh = 0;
-//        return;
-//      }
-//    }
-//  }
-//}
-
-
-
-
-
-
-
 /****************************************************************************
  ***                       Pulse and Stop & Drop                          ***
  ****************************************************************************/
 
 
 unsigned long currentMillisRight = millis();
+
 if(amount == 8 && theEnd == 0){
   if(currentMillisRight - previousMillis_1 >= interval_1){
     PulseCountRight = 0;   
@@ -860,47 +590,52 @@ if(theEnd == 1 && amount == 8){
     lastSensor = 4;
     }
 //}
+/****************************************************************************
+ ***                      Sonic Sensor(distance)                          ***
+ ****************************************************************************/
+ long duration, inches, cm;
+   pinMode(pingPin, OUTPUT);
+   digitalWrite(pingPin, LOW);
+//   delayMicroseconds(2);
+   digitalWrite(pingPin, HIGH);
+//   delayMicroseconds(10);
+   digitalWrite(pingPin, LOW);
+   pinMode(echoPin, INPUT);
+   duration = pulseIn(echoPin, HIGH);
+   inches = microsecondsToInches(duration);
+   cm = microsecondsToCentimeters(duration);
+//   Serial.print(inches);
+//   Serial.print("in, ");
+//   Serial.print(cm);
+//   Serial.print("cm");
+
+    Serial.println();
   //  delay(250);
 
 
 //replace these with the pulse sensor stuff EPICC
 if(cm < 15){
-//  Right();
-//  delay(650);
-//  Forward();
-//  delay(1000);
-//  Left();
-//  delay(700);
-//  Forward();
-//  delay(1000);
-//  Left();
-//  delay(700);
-//  Forward();
-//  delay(1300);
-//  Right();
-//  delay(200)
+  Right();
+  delay(650);
+  Forward();
+  delay(1000);
+  Left();
+  delay(700);
+  Forward();
+  delay(1000);
+  Left();
+  delay(700);
+  Forward();
+  delay(1300);
+  Right();
+  delay(200);
 
-
-Motor(0,250,250,0);
-delay(500);
-Motor(170,255,0,0);
-delay(1000);
+}
 
 
 
-//Motor(0,0,250,250);
-//delay(400)
-//Motor(0,250, 250, 0);
-//delay(500);
-//Motor(250,250,0,0);
-//delay(1000);
-//Motor(250,0,0,250);
-//delay(500);
-//Motor(250,250,0,0);
-//delay(1100);
-//if(lastSensor > 3){ Right();} else if(<4){Right();} 
-
-
+  
+  
    
 /****************************************************************************
  ***                        Neo Pixels and Motors                         ***
@@ -974,13 +709,35 @@ long microsecondsToCentimeters(long microseconds) {
 }
 
 /****************************************************************************
+ ***              Object avoidance With sonic and pulse                   ***
+ ****************************************************************************/
+
+//if(cm<=10){
+//  
+//  neoLeft();
+//
+//
+//
+//}
+
+/****************************************************************************
  ***                      Gripper                                         ***
  ****************************************************************************/
 
 void gripperOpen(){
+//  for (servoPos = 5; servoPos <= 130; servoPos += 1) { // goes from 0 degrees to 180 degrees
+//    // in steps of 1 degree
+//    gripper.write(servoPos);              // tell servo to go to position in variable 'pos'
+//    delay(15);                       // waits 15ms for the servo to reach the position
+//  }
   gripper.write(100);
 }
 
 void gripperClose(){
+//  for (servoPos = 130; servoPos >= 5; servoPos -= 1) { // goes from 180 degrees to 0 degrees
+//    gripper.write(servoPos);              // tell servo to go to position in variable 'pos'
+//    delay(15);                       // waits 15ms for the servo to reach the position
+//  
+//  }
   gripper.write(40);
 }
