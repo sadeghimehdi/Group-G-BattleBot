@@ -25,6 +25,7 @@ long duration; //time the sound takes to travel
 long distance; //distance in cm, will be calculated from the duration
 
 int minDistance = 28;
+boolean programStart = false;
 
 void setup() {
   // put your setup code here, to run once:
@@ -45,13 +46,6 @@ void setup() {
   Serial.begin(9600); //to output the distance to the console
 }//end setup
 
-void wait(int milliseconds){
-  int time = millis();
-  while(millis() < time + milliseconds){
-    //do nothing
-  }
-}
-
 void loop() {
   // put your main code here, to run repeatedly:
   gripperClose();
@@ -66,14 +60,18 @@ void leftMaze(){
   delay(500);
   distance = getDistance();
 
-  if(distance > 8){
-    Serial.println("ONWARDS");
-    moveToWall();
-    stopRobot();
+  if(programStart){
+    if(distance > 8){
+      Serial.println("ONWARDS");
+      moveToWall();
+      stopRobot();
+    }
   }
 
+  programStart = true;
+
   sensorLeft();
-  delay(500);
+  delay(300);
   distance = getDistance();
   
   if(distance > minDistance){
@@ -87,17 +85,17 @@ void leftMaze(){
 
     Serial.println("Nothing left");
     sensorCenter();
-    delay(500);
+    delay(300);
     distance = getDistance();
 
-    if(distance > minDistance){
+    if(distance > 8){
       //do nothing
       Serial.println("Nothing left to do");
     } else {
 
       Serial.println("Nothing center");
       sensorRight();
-      delay(500);
+      delay(300);
       distance = getDistance();
 
       if(distance > minDistance){
@@ -146,15 +144,31 @@ int getDistance(){
 }//end getDistance
 
 void turnAround(){
-  moveRightWheelBackwards();
-  waitUntilPulseCountRight(30);
-  stopRobot();
+  if(distanceLeft > distanceRight){
 
-  delay(100);
+    moveLeftWheelBackwards();
+    waitUntilPulseCountLeft(40);
+    stopRobot();
+  
+    delay(100);
+  
+    moveRightWheelForwards();
+    waitUntilPulseCountRight(30);
+    stopRobot();
+    
+  } else {
 
-  moveLeftWheelForwards();
-  waitUntilPulseCountLeft(40);
-  stopRobot();
+    moveRightWheelBackwards();
+    waitUntilPulseCountRight(30);
+    stopRobot();
+  
+    delay(100);
+  
+    moveLeftWheelForwards();
+    waitUntilPulseCountLeft(40);
+    stopRobot();
+    
+  }//end if
 
   delay(100);
 
@@ -169,7 +183,7 @@ void tooLeft(){
   delay(200);
   int distanceLeft = getDistance();
   
-  if (distanceLeft < 10){
+  if (distanceLeft < 8){
     turnRight();
     waitUntilPulseCount(5);
     stopRobot();
@@ -180,10 +194,10 @@ void tooLeft(){
 void tooRight(){
 
   sensorRight();
-  delay(200);
+  delay(300);
   int distanceRight = getDistance();
   
-  if (distanceRight < 10){
+  if (distanceRight < 8){
     turnLeft();
     waitUntilPulseCount(5);
     stopRobot();
@@ -443,9 +457,9 @@ void moveRightWheelBackwards(){
 void gripperOpen(){
   for(int i = 0;i < 4; i++){
     digitalWrite(gripperPin, HIGH);
-    delayMicroseconds(1600); // Duration of the pulse in microseconds
+    delayMicroseconds(1700); // Duration of the pulse in microseconds
     digitalWrite(gripperPin, LOW);
-    // Pulses duration: 1600 = open
+    // Pulses duration: 1700 = open
     delay(20);
   }
 }
@@ -453,9 +467,9 @@ void gripperOpen(){
 void gripperClose(){
   for(int i = 0;i < 4; i++){
     digitalWrite(gripperPin, HIGH);
-    delayMicroseconds(1010); // Duration of the pulse in microseconds
+    delayMicroseconds(1050); // Duration of the pulse in microseconds
     digitalWrite(gripperPin, LOW);
-    // Pulses duration: 1000 = fully closed
+    // Pulses duration: 1050 = fully closed
     delay(20);
   }
 }
