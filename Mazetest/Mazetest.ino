@@ -74,6 +74,22 @@ void leftMaze(){
   sensorLeft();
   delay(600);
   distance = getDistance();
+
+  //double checks if the left distance is actually open
+  //too many special cases for it to be random chance
+  if(distance < minDistance){
+    turnLeftSlow();
+    waitUntilPulseCount(5);
+    stopRobot();
+
+    distance = getDistance();
+
+    if(distance < minDistance){
+      turnRightSlow();
+      waitUntilPulseCount(5);
+      stopRobot();
+    }//end if
+  }//end doublecheck for left
   
   if(distance > minDistance){
     
@@ -189,7 +205,7 @@ void tooLeft(){
   int distanceLeft = getDistance();
   
   if (distanceLeft < 8){
-    turnRight();
+    turnRightSlow();
     waitUntilPulseCount(5);
     stopRobot();
   }
@@ -203,7 +219,7 @@ void tooRight(){
   int distanceRight = getDistance();
   
   if (distanceRight < 8){
-    turnLeft();
+    turnLeftSlow();
     waitUntilPulseCount(5);
     stopRobot();
   }
@@ -256,7 +272,7 @@ void moveToWall(){
   } else {
     
     moveForwards();
-    waitUntilPulseCount(50);
+    waitUntilPulseCount(45);
     stopRobot();
     
   }//end if else
@@ -420,6 +436,18 @@ void turnLeft(){
   analogWrite(motorB2, 0);
 }
 
+void turnLeftSlow(){
+  digitalWrite(motorA1, HIGH);
+  digitalWrite(motorA2, LOW);
+  digitalWrite(motorB1, HIGH);
+  digitalWrite(motorB2, LOW);
+
+  analogWrite(motorA1, 150);
+  analogWrite(motorA2, 0);
+  analogWrite(motorB1, 150);
+  analogWrite(motorB2, 0);
+}
+
 void turnRight(){
   digitalWrite(motorA1, LOW);
   digitalWrite(motorA2, HIGH);
@@ -430,6 +458,18 @@ void turnRight(){
   analogWrite(motorA2, 200);
   analogWrite(motorB1, 0);
   analogWrite(motorB2, 200);
+}
+
+void turnRightSlow(){
+  digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, HIGH);
+  digitalWrite(motorB1, LOW);
+  digitalWrite(motorB2, HIGH);
+
+  analogWrite(motorA1, 0);
+  analogWrite(motorA2, 150);
+  analogWrite(motorB1, 0);
+  analogWrite(motorB2, 150);
 }
 
 void moveLeftWheelForwards(){
