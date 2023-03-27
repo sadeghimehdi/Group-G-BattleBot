@@ -281,10 +281,12 @@ if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && se
   gripperClosed = 1;
  
   delay(200);
-  Left();
-  delay(300);
   Forward();
   delay(200);
+  Motor(250,0,0,250);
+  delay(300);
+//  Forward();
+//  delay(200);
 }
 //if(sensorValues[0] > 800 || sensorValues[1] > 800 || sensorValues[2] > 800 || sensorValues[3] > 800 || sensorValues[4] > 800 || sensorValues[5] > 800 || sensorValues[6] > 800 || sensorValues[7] > 800){
   int amount = 0;
@@ -864,7 +866,7 @@ if(theEnd == 1 && amount == 8){
 
 
 //replace these with the pulse sensor stuff EPICC
-if(cm < 15){
+if(cm < 25){
 //  Right();
 //  delay(650);
 //  Forward();
@@ -882,14 +884,14 @@ if(cm < 15){
 
 
 Motor(0,250,250,0);
-delay(500);
-Motor(170,255,0,0);
-delay(1000);
+delay(350);
+Motor(255,170,0,0);
+delay(2200);
 
 
 
 //Motor(0,0,250,250);
-//delay(400)
+//delay(400);
 //Motor(0,250, 250, 0);
 //delay(500);
 //Motor(250,250,0,0);
@@ -898,9 +900,9 @@ delay(1000);
 //delay(500);
 //Motor(250,250,0,0);
 //delay(1000);
-//if(lastSensor > 3){ Right();} else if(<4){Right();} else {Forward();} 
+//if(lastSensor > 3){ Right();} else if(lastSensor < 4){Right();} else {Forward();} 
 
-
+}
    
 /****************************************************************************
  ***                        Neo Pixels and Motors                         ***
