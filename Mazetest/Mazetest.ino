@@ -376,8 +376,28 @@ void moveToWall(){
   int counter = 0;
   
   if(distance < 40){
+
+    int previousPulseStateRight = digitalRead(pulsePinRight);
     
     while(distance > 8 && distance < 40){
+      
+    //code for counting pulses, if pulses are greater than 60, then stop the function because it's gone too far
+      
+      int pulseStateRight = digitalRead(pulsePinRight);
+  
+      if (pulseStateRight != previousPulseStateRight){
+        // State change
+        previousPulseStateRight = pulseStateRight;
+        PulseCountRight++;
+        
+      }//end if
+    
+      if(pulseCountRight > 60){
+        PulseCountRight = 0;
+        return;
+      }//end stop if too many pulses
+
+    //end code for wheel sensors
       
       lastDistance = distance;
       moveForwards();
