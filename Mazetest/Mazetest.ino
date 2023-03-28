@@ -82,18 +82,8 @@ void loop() {
       startup = false;
       inMaze = true;
     }//end startup
-
-    if(inMaze){
-      gripperClose();
-      rightMaze();
-      delay(500);
-    }//end inmaze
-
-    if(!inMaze && !startup){
-      lineFollowAndEnd();
-    }//end linefollow
     
-  }//end if
+  }//end if maze complete
 }//end loop
 
 void leftMaze(){
