@@ -140,6 +140,88 @@ void leftMaze(){
 }//end leftMaze
 
 void rightMaze(){
+
+  
+  if(programStart){
+    sensorCenter();
+    delay(300);
+    distance = getDistance();
+
+  
+    if(distance > 8){
+      Serial.println("ONWARDS");
+      moveToWall();
+      stopRobot();
+    }
+  }
+
+  programStart = true;
+
+  sensorRight();
+  delay(600);
+  distance = getDistance();
+
+  //double checks if the left distance is actually open
+  //too many special cases for it to be random chance
+  if(distance < minDistance){
+    turnRightSlow();
+    waitUntilPulseCount(5);
+    stopRobot();
+
+    distance = getDistance();
+
+    if(distance < minDistance){
+      turnLeftSlow();
+      waitUntilPulseCount(5);
+      stopRobot();
+    }//end if
+  }//end doublecheck for left
+  
+  if(distance > minDistance){
+    
+    Serial.println("HARD TO STARBOARD");
+    turnRight();
+    waitUntilPulseCount(16);
+    stopRobot();
+    
+  } else {
+
+    Serial.println("Nothing right");
+    sensorCenter();
+    delay(300);
+    distance = getDistance();
+
+    if(distance > 8){
+      //do nothing
+      Serial.println("Nothing right to do");
+    } else {
+
+      Serial.println("Nothing center");
+      sensorLeft();
+      delay(300);
+      distance = getDistance();
+
+      if(distance > minDistance){
+        
+        Serial.println("LEFT");
+        turnLeft();
+        waitUntilPulseCount(16);
+        stopRobot();
+        
+      } else {
+        
+        Serial.println("BACKTRACK");
+        turnAround();
+        delay(100);
+        
+      }//end if left
+      
+    }//end if forward
+    
+  }//end if left
+
+  tooRight();
+  tooLeft();
   
 }//end rightMaze
 
