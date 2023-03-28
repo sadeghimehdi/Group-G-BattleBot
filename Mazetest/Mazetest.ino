@@ -16,6 +16,8 @@ int lastSensor = NULL;
 boolean mazeComplete = false;
 boolean startup = true;
 boolean inmaze = false;
+boolean activateLineSensors = false;
+boolean programStart = false;
 
 
 
@@ -49,7 +51,6 @@ long distanceLeft;
 long distanceRight;
 
 int minDistance = 28;
-boolean programStart = false;
 
 void setup() {
   // put your setup code here, to run once:
@@ -97,18 +98,27 @@ void loop() {
 
 void leftMaze(){
 
+  if(activateLineSensors){
+    if(sensorValues[0] > 600 || sensorValues[1] > 600 || sensorValues[2] > 600 || sensorValues[3] > 600 || sensorValues[4] > 600 || sensorValues[5] > 600 || sensorValues[6] > 600 || sensorValues[7] > 600){
+      inMaze = false;
+      return;
+    }//end if
+  }//end activate line sensors
+  
   if(programStart){
     sensorCenter();
     delay(300);
     distance = getDistance();
-
   
     if(distance > 8){
       Serial.println("ONWARDS");
       moveToWall();
       stopRobot();
-    }
-  }
+    }//end if distance
+
+    activateLineSensors = true;
+    
+  }//end if programstart
 
   programStart = true;
 
@@ -182,19 +192,27 @@ void leftMaze(){
 
 void rightMaze(){
 
+  if(activateLineSensors){
+    if(sensorValues[0] > 600 || sensorValues[1] > 600 || sensorValues[2] > 600 || sensorValues[3] > 600 || sensorValues[4] > 600 || sensorValues[5] > 600 || sensorValues[6] > 600 || sensorValues[7] > 600){
+      inMaze = false;
+      return;
+    }//end if
+  }//end activate line sensors
   
   if(programStart){
     sensorCenter();
     delay(300);
     distance = getDistance();
-
   
     if(distance > 8){
       Serial.println("ONWARDS");
       moveToWall();
       stopRobot();
-    }
-  }
+    }//end if distance
+
+    activateLineSensors = true;
+    
+  }//end if programstart
 
   programStart = true;
 
@@ -675,7 +693,7 @@ void gripperClose(){
 void sensorRight(){
   for(int i = 0;i < 4; i++){
     digitalWrite(rotatorPin, HIGH);
-    delayMicroseconds(350); // Duration of the pusle in microseconds
+    delayMicroseconds(350); // Duration of the pulse in microseconds
     digitalWrite(rotatorPin, LOW);
     //Pulse duration: 350ms = 0 degrees
     delay(20);
@@ -685,7 +703,7 @@ void sensorRight(){
 void sensorLeft(){
   for(int i = 0;i < 4; i++){
     digitalWrite(rotatorPin, HIGH);
-    delayMicroseconds(2310); // Duration of the pusle in microseconds
+    delayMicroseconds(2310); // Duration of the pulse in microseconds
     digitalWrite(rotatorPin, LOW);
     //Pulse duration: 2310ms - 180deg
     delay(20);
@@ -695,7 +713,7 @@ void sensorLeft(){
 void sensorCenter(){
   for(int i = 0;i < 4; i++){
     digitalWrite(rotatorPin, HIGH);
-    delayMicroseconds(1310); // Duration of the pusle in microseconds
+    delayMicroseconds(1310); // Duration of the pulse in microseconds
     digitalWrite(rotatorPin, LOW);
     //Pulse duration: 1310ms = 90 degrees
     delay(20);
@@ -704,9 +722,7 @@ void sensorCenter(){
 
 void startupSequence(){
 
-  // put your setup code here, to run once:
   gripperOpen();
-
 
 // configure the sensors
   qtr.setTypeAnalog();
@@ -741,8 +757,6 @@ void startupSequence(){
   }
   Serial.println();
   Serial.println();
-
-}
 
 }//end startUpSequence
 
@@ -831,7 +845,7 @@ if(amount == 8 && theEnd == 0){
     unsigned long lastPulseTime = millis();
     Motor(200,200,0,0);
     
-    while (1)
+    while (PulseCountRight < 7)
     {
       Serial.println(PulseCountRight);
       int pulseState = digitalRead(PulsePinRight);
@@ -844,14 +858,17 @@ if(amount == 8 && theEnd == 0){
         lastPulseTime = millis();
       }
       
-      if (PulseCountRight == 7)
-      {
+      
         //stop after a set amount of pulses
         Serial.println("STOP AHHHH");
         theEnd = 1;
-        return;
-      }
-    }
+
+    } //end while
+
+    //stop after a set amount of pulses
+        Serial.println("STOP AHHHH");
+        theEnd = 1;
+        
   }
 }
 
