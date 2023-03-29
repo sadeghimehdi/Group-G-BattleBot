@@ -16,6 +16,8 @@ void loop() {
 
   long cm = t / 29 / 2; //time convert distance
   if(cm < 23){
-    //start doing main code
+    for(int i = 5; i<=0; i--){
+      //do the main code
+    }
   }
 }
