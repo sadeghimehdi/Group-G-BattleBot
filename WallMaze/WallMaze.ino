@@ -1,23 +1,23 @@
 #include <QTRSensors.h>
 QTRSensors qtr;
 const uint8_t SensorCount = 8;
-uint16_t sensorValues[SensorCount];
-
+volatile uint16_t sensorValues[SensorCount];
 /****************************************************************************
  ***                             Millis                                   ***
  ****************************************************************************/
-unsigned long previousMillis_1 = 0
+unsigned long previousMillis_1 = 0;
 const long interval_1 = 5000; //interval for first event (5seconds)
 int theEnd = 0;
 int lastSensor = NULL;
 
 
 
-boolean mazeComplete = false;
-boolean startup = true;
-boolean inmaze = false;
-boolean activateLineSensors = false;
-boolean programStart = false;
+boolean mazeComplete = false; //for stopping the robot at the end of the maze
+boolean startup = true; //for the startup sequence of the robot
+boolean inMaze = false; //for the maze algorithm
+boolean activateLineSensors = false; //delaying activation of the line sensors
+boolean programStart = false; //for delaying checking forwards of the robot
+boolean checkDistance = true; //for detecting the robot
 
 
 
@@ -70,17 +70,28 @@ void setup() {
 
   Serial.begin(9600); //to output the distance to the console
 
-  startupSequence();
 }//end setup
 
 void loop() {
   // put your main code here, to run repeatedly:
   if(!mazeComplete){
+
+    if(checkDistance){
+      sensorCenter();
+      distance = getDistance();
+      if(distance < 30){
+        Serial.println("Robot detected");
+        delay(500);
+        checkDistance = false;
+      }//end if
+    }
     
-    if(startup){
+    if(!checkDistance && startup){
+      startupSequence();
       startFollowingLine();
       startup = false;
       inMaze = true;
+      Serial.println("Startup complete");
     }//end startup
 
     if(inMaze){
@@ -90,6 +101,7 @@ void loop() {
     }//end inmaze
 
     if(!inMaze && !startup){
+      Serial.println("Line detected");
       lineFollowAndEnd();
     }//end linefollow
     
@@ -193,7 +205,8 @@ void leftMaze(){
 void rightMaze(){
 
   if(activateLineSensors){
-    if(sensorValues[0] > 600 || sensorValues[1] > 600 || sensorValues[2] > 600 || sensorValues[3] > 600 || sensorValues[4] > 600 || sensorValues[5] > 600 || sensorValues[6] > 600 || sensorValues[7] > 600){
+    if(sensorValues[0] > 800 || sensorValues[1] > 800 || sensorValues[2] > 800 || sensorValues[3] > 800 || sensorValues[4] > 800 || sensorValues[5] > 800 || sensorValues[6] > 800 || sensorValues[7] > 800){
+      while(counter
       inMaze = false;
       return;
     }//end if
@@ -346,7 +359,7 @@ void tooLeft(){
   distanceLeft = getDistance();
   
   if (distanceLeft < 8){
-    turnRightSlow();
+    turnRight();
     waitUntilPulseCount(5);
     stopRobot();
   }
@@ -360,7 +373,7 @@ void tooRight(){
   distanceRight = getDistance();
   
   if (distanceRight < 8){
-    turnLeftSlow();
+    turnLeft();
     waitUntilPulseCount(5);
     stopRobot();
   }
@@ -392,7 +405,7 @@ void moveToWall(){
         
       }//end if
     
-      if(pulseCountRight > 60){
+      if(PulseCountRight > 60){
         PulseCountRight = 0;
         return;
       }//end stop if too many pulses
@@ -407,38 +420,14 @@ void moveToWall(){
         counter++;
         Serial.println(counter);
         if(counter > 10){
-          
+
+          moveBackwards();
+          delay(300);
           stopRobot();
-          delay(100);
 
-          sensorLeft();
-          delay(600);
-          distanceLeft = getDistance();
-          sensorRight();
-          delay(600);
-          distanceRight = getDistance();
-
-          if(distanceLeft > 30 || distanceRight > 30){
-
-            moveBackwards();
-            delay(300);
-            stopRobot();
-  
-            if(distanceLeft > distanceRight(){
-              turnRightSlow();
-              waitUntilPulseCount(5);
-              stopRobot();
-            } else {
-               turnLeftSlow();
-               waitUntilPulseCount(5);
-               stopRobot();
-            }//end if distance
-
-          } else {
-            tooLeft();
-            tooRight();
-          }//end if else
-
+          tooLeft();
+          tooRight();
+           
           counter = 0;
           
           sensorCenter();
@@ -456,7 +445,7 @@ void moveToWall(){
   } else {
     
     moveForwards();
-    waitUntilPulseCount(45);
+    waitUntilPulseCount(50);
     stopRobot();
     
   }//end if else
@@ -471,7 +460,7 @@ void waitUntilPulseCount(unsigned long count){
   boolean right = false;
   boolean left = false;
 
-  while (!right && !left){
+  while (1){
     int pulseStateLeft = digitalRead(pulsePinLeft);
     int pulseStateRight = digitalRead(pulsePinRight);
 
@@ -508,6 +497,10 @@ void waitUntilPulseCount(unsigned long count){
       stopRobot();
       PulseCountRight = 0;
       PulseCountLeft = 0;
+      return;
+    }
+
+    if(right == true && left == true){
       return;
     }
     
@@ -691,7 +684,7 @@ void moveRightWheelBackwards(){
 }
 
 void gripperOpen(){
-  for(int i = 0;i < 4; i++){
+  for(int i = 0;i < 8; i++){
     digitalWrite(gripperPin, HIGH);
     delayMicroseconds(1700); // Duration of the pulse in microseconds
     digitalWrite(gripperPin, LOW);
@@ -701,7 +694,7 @@ void gripperOpen(){
 }
 
 void gripperClose(){
-  for(int i = 0;i < 4; i++){
+  for(int i = 0;i < 8; i++){
     digitalWrite(gripperPin, HIGH);
     delayMicroseconds(1050); // Duration of the pulse in microseconds
     digitalWrite(gripperPin, LOW);
@@ -755,7 +748,7 @@ void startupSequence(){
   // 0.1 ms per sensor * 4 samples per sensor read (default) * 8 sensors
   // * 10 reads per calibrate() call = ~32 ms per calibrate() call.
   // Call calibrate() 15 times to make calibration take about 0,48 seconds.
-  Motor(255,255,0,0);
+  moveForwards();
 
   for (uint16_t i = 0; i < 15; i++){
     qtr.calibrate();
@@ -797,22 +790,21 @@ void startFollowingLine(){
     Serial.print('\t');
   }
   Serial.println(position);
+
+  gripperOpen();
+  waitUntilPulseCount(20);
   
-  // put your main code here, to run repeatedly:
-  if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && sensorValues[3] > 600 && sensorValues[4] > 600 && sensorValues[5] > 600 && sensorValues[6] > 600 && sensorValues[7] > 600 && gripperClosed == 0){
-    stopRobot();
-    //close gripper
-    gripperClose();
-   
-    delay(100);
-    turnLeft();
-    waitUntilPulseCount(16);
-    moveForwards();
-    waitUntilPulseCount(40);
-    stopRobot();
-    return;
-    
-  }//end if
+  //close gripper
+  gripperClose();
+
+  moveForwards();
+  waitUntilPulseCount(20);
+  turnLeft();
+  waitUntilPulseCount(16);
+  moveForwards();
+  waitUntilPulseCount(60);
+  stopRobot();
+  return;
   
 }//end startFollowingLine
 
@@ -861,14 +853,14 @@ unsigned long currentMillisRight = millis();
 if(amount == 8 && theEnd == 0){
   if(currentMillisRight - previousMillis_1 >= interval_1){
     PulseCountRight = 0;   
-    int previousPulseState = digitalRead(PulsePinRight);
+    int previousPulseState = digitalRead(pulsePinRight);
     unsigned long lastPulseTime = millis();
     Motor(200,200,0,0);
     
     while (PulseCountRight < 7)
     {
       Serial.println(PulseCountRight);
-      int pulseState = digitalRead(PulsePinRight);
+      int pulseState = digitalRead(pulsePinRight);
       
       if (pulseState != previousPulseState)
       {
@@ -1046,7 +1038,7 @@ void Motor(int x1, int x2, int x3, int x4){
    analogWrite(motorA2, x2);
    analogWrite(motorB2, x3);
    analogWrite(motorA1, x4);    
-   
+}
 void Right(){
    analogWrite(motorB1, 0);
    analogWrite(motorA2, 255);
@@ -1080,4 +1072,3 @@ void Stop(){
    analogWrite(motorB2, 0);
    analogWrite(motorA1, 0);
   }
-}//end motor
