@@ -23,6 +23,9 @@ const int echoPinFront = 8; //pin for receiving the sound
 const int trigPinRight = 4; //pin for sending the sound
 const int echoPinRight = 9; //pin for receiving the sound
 
+boolean rightTurnMade = false;
+boolean leftTurnMade = false;
+
 long duration; //time the sound takes to travel
 long distanceFront; //distance in cm, will be calculated from the duration
 long distanceRight;
@@ -100,6 +103,7 @@ void loop() {
 
   distanceRight = getDistanceRight();
   if(distanceRight < 4){
+    //get away from the wall
     turnLeft();
     waitUntilPulseCount(4);
   } else if (distanceRight < 8) {
@@ -108,7 +112,13 @@ void loop() {
   } else if (distanceRight < 12){
     analogWrite(motorB1, 150);
     analogWrite(motorA2, 200);
-  }//end else if
+  } else if (distanceRight < 20){
+    analogWrite(motorB1, 110);
+    analogWrite(motorA2, 250);
+  } else if (distanceRight < minDistance){
+    turnRight();
+    waitUntilPulseCount(4);
+  }//end adjustment
 
 }//end loop
 
@@ -302,8 +312,8 @@ void waitUntilPulseCount(unsigned long count){
       // No pulse state change for a while.  Must have hit a stop
       moveBackwards();
       delay(300);
-      analogWrite(motorB2, 150);
-      waitUntilPulseCountLeft(5); 
+      turnLeft();
+      waitUntilPulseCountLeft(4); 
       stopRobot();
       PulseCountRight = 0;
       PulseCountLeft = 0;
