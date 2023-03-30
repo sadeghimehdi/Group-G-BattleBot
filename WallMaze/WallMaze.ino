@@ -204,9 +204,10 @@ void leftMaze(){
 
 void rightMaze(){
 
+  uint16_t position = qtr.readLineBlack(sensorValues);
+
   if(activateLineSensors){
     if(sensorValues[0] > 800 || sensorValues[1] > 800 || sensorValues[2] > 800 || sensorValues[3] > 800 || sensorValues[4] > 800 || sensorValues[5] > 800 || sensorValues[6] > 800 || sensorValues[7] > 800){
-      while(counter
       inMaze = false;
       return;
     }//end if
