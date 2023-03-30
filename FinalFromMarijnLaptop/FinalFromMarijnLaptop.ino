@@ -480,48 +480,48 @@ void loop()
     lastSensor = 4;
   }
 
-  if(cm < 20){
-    if(currentMillisRight - previousMillis_1 >= interval_1){
-      Motor(0,250,250,0);
-      delay(350);
-      Motor(255,170,0,0);
-      delay(2000);
+//  if(cm < 20){
+//    if(currentMillisRight - previousMillis_1 >= interval_1){
+//      Motor(0,250,250,0);
+//      delay(350);
+//      Motor(255,170,0,0);
+//      delay(2000);
+//    }
+//  }
+
+
+
+//
+if(cm < 20){
+  if(currentMillisRight - previousMillis_1 >= interval_1){
+    int previousPulseState = digitalRead(pulsePinRight);
+    unsigned long lastPulseTime = millis();
+     Motor(0,250,250,0);
+     delay(350);
+     pulseCountRight = 0;   
+
+   while (1){
+       Motor(255,170,0,0);
+      Serial.println(pulseCountRight);
+      int pulseState = digitalRead(pulsePinRight);
+      
+      if (pulseState != previousPulseState){
+        // State change
+        previousPulseState = pulseState;
+        pulseCountRight++;
+        lastPulseTime = millis();
+      }
+      
+      if (pulseCountRight == 100){
+        //stop after a set amount of pulses
+        Serial.println("STOP AHHHH");
+        lastSensor = 2;
+        return;
+      }
     }
   }
 
-
-
-//
-//if(cm < 20){
-//  if(currentMillisRight - previousMillis_1 >= interval_1){
-//    int previousPulseState = digitalRead(pulsePinRight);
-//    unsigned long lastPulseTime = millis();
-//     Motor(0,250,250,0);
-//     delay(350);
-//     pulseCountRight = 0;   
-//
-//   while (1){
-//       Motor(255,170,0,0);
-//      Serial.println(pulseCountRight);
-//      int pulseState = digitalRead(pulsePinRight);
-//      
-//      if (pulseState != previousPulseState){
-//        // State change
-//        previousPulseState = pulseState;
-//        pulseCountRight++;
-//        lastPulseTime = millis();
-//      }
-//      
-//      if (pulseCountRight == 100){
-//        //stop after a set amount of pulses
-//        Serial.println("STOP AHHHH");
-//        lastSensor = 2;
-//        return;
-//      }
-//    }
-//  }
-//
-//}
+}
 
 //
 ///****************************************************************************
