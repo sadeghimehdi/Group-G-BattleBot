@@ -41,13 +41,13 @@ unsigned long PulseCountRight;
 // Timeout value looking for an encoder pulse
 const unsigned MaxPulseLength = 2000;
 
-const int trigPin = 7; //pin for sending the sound
-const int echoPin = 8; //pin for receiving the sound
+const int trigPinFront = 7; //pin for sending the sound
+const int echoPinFront = 8; //pin for receiving the sound
+const int trigPinRight = 4; //pin for sending the sound
+const int echoPinRight = 9; //pin for receiving the sound
 
 long duration; //time the sound takes to travel
-long distance; //distance in cm, will be calculated from the duration
-
-long distanceLeft;
+long distanceFront; //distance in cm, will be calculated from the duration
 long distanceRight;
 
 int minDistance = 28;
@@ -65,8 +65,11 @@ void setup() {
   pinMode(motorB2, OUTPUT);
   pinMode(pulsePinRight, INPUT);
 
-  pinMode(trigPin, OUTPUT); //output, since arduino tells the trigger when to send the sound
-  pinMode(echoPin, INPUT); // input, since the echo tells the arduino how long it was on for
+  pinMode(trigPinFront, OUTPUT); //output, since arduino tells the trigger when to send the sound
+  pinMode(echoPinFront, INPUT); // input, since the echo tells the arduino how long it was on for
+
+  pinMode(trigPinRight, OUTPUT); //output, since arduino tells the trigger when to send the sound
+  pinMode(echoPinRight, INPUT); // input, since the echo tells the arduino how long it was on for
 
   Serial.begin(9600); //to output the distance to the console
 
