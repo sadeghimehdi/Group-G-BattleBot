@@ -7,10 +7,19 @@ volatile uint16_t sensorValues[SensorCount];
  ****************************************************************************/
 unsigned long previousMillis_1 = 0;
 const long interval_1 = 5000; //interval for first event (5seconds)
+
+// Timeout value looking for an encoder pulse
+const unsigned MaxPulseLength = 2000;
+const unsigned lineSensorDelay = 5000; //wait 5 seconds before starting line sensors during maze algorithm
+int mazeStartTime = 0;
+
 int theEnd = 0;
 int lastSensor = NULL;
 
 
+/****************************************************************************
+ ***                 Booleans for robot staging                           ***
+ ****************************************************************************/
 
 boolean mazeComplete = false; //for stopping the robot at the end of the maze
 boolean startup = true; //for the startup sequence of the robot
@@ -20,6 +29,9 @@ boolean programStart = false; //for delaying checking forwards of the robot
 boolean checkDistance = true; //for detecting the robot
 
 
+/****************************************************************************
+ ***                 Variables and pin numbers                            ***
+ ****************************************************************************/
 
 const int gripperPin = 12;
 const int rotatorPin = 13;
@@ -38,11 +50,6 @@ const byte pulsePinRight = 2;  //Pin conneccted to right encoder
 unsigned long PulseCountLeft;
 unsigned long PulseCountRight;
 
-// Timeout value looking for an encoder pulse
-const unsigned MaxPulseLength = 2000;
-const unsigned lineSensorDelay = 5000; //wait 5 seconds before starting line sensors during maze algorithm
-int mazeStartTime = 0;
-
 const int trigPinFront = 7; //pin for sending the sound
 const int echoPinFront = 8; //pin for receiving the sound
 const int trigPinRight = 4; //pin for sending the sound
@@ -53,6 +60,10 @@ long distanceFront; //distance in cm, will be calculated from the duration
 long distanceRight;
 
 int minDistance = 28;
+
+/****************************************************************************
+ ***                               Setup                                  ***
+ ****************************************************************************/
 
 void setup() {
   // put your setup code here, to run once:
@@ -76,6 +87,10 @@ void setup() {
   Serial.begin(9600); //to output the distance to the console
 
 }//end setup
+
+/****************************************************************************
+ ***                             Loop                                     ***
+ ****************************************************************************/
 
 void loop() {
   // put your main code here, to run repeatedly:
@@ -109,6 +124,10 @@ void loop() {
     
   }//end if
 }//end loop
+
+/****************************************************************************
+ ***               Maze solving and correction functions                  ***
+ ****************************************************************************/
 
 void rightMaze(){
 
@@ -233,6 +252,9 @@ int getDistanceRight(){
   return distanceRight;
 }//end getDistance
 
+/****************************************************************************
+ ***                      Wheel sensor functions                          ***
+ ****************************************************************************/
 
 void waitUntilPulseCount(unsigned long count){
   int previousPulseStateLeft = digitalRead(pulsePinLeft);
@@ -356,6 +378,10 @@ void waitUntilPulseCountRight(unsigned long count){
   
 }//end waitUntilRight
 
+/****************************************************************************
+ ***                           Motor functions                            ***
+ ****************************************************************************/
+
 void stopRobot(){
   digitalWrite(motorA1, LOW);
   digitalWrite(motorA2, LOW);
@@ -419,6 +445,10 @@ void turnRight(){
   analogWrite(motorB2, 200);
 }
 
+/****************************************************************************
+ ***                         Gripper functions                            ***
+ ****************************************************************************/
+
 void gripperOpen(){
   for(int i = 0;i < 8; i++){
     digitalWrite(gripperPin, HIGH);
@@ -438,6 +468,10 @@ void gripperClose(){
     delay(20);
   }
 }
+
+/****************************************************************************
+ ***                          Startup code                                ***
+ ****************************************************************************/
 
 void startupSequence(){
 
@@ -513,6 +547,10 @@ void startFollowingLine(){
   return;
   
 }//end startFollowingLine
+
+/****************************************************************************
+ ***                        Line following code                           ***
+ ****************************************************************************/
 
 void lineFollowAndEnd(){
 
