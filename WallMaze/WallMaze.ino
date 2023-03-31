@@ -100,7 +100,6 @@ void loop() {
     if(inMaze){
       gripperClose();
       rightMaze();
-      delay(500);
     }//end inmaze
 
     if(!inMaze && !startup){
@@ -110,100 +109,6 @@ void loop() {
     
   }//end if
 }//end loop
-
-void leftMaze(){
-
-  if(activateLineSensors){
-    if(sensorValues[0] > 600 || sensorValues[1] > 600 || sensorValues[2] > 600 || sensorValues[3] > 600 || sensorValues[4] > 600 || sensorValues[5] > 600 || sensorValues[6] > 600 || sensorValues[7] > 600){
-      inMaze = false;
-      return;
-    }//end if
-  }//end activate line sensors
-  
-  if(programStart){
-    sensorCenter();
-    delay(300);
-    distance = getDistance();
-  
-    if(distance > 8){
-      Serial.println("ONWARDS");
-      moveToWall();
-      stopRobot();
-    }//end if distance
-
-    activateLineSensors = true;
-    
-  }//end if programstart
-
-  programStart = true;
-
-  sensorLeft();
-  delay(600);
-  distance = getDistance();
-
-  //double checks if the left distance is actually open
-  //too many special cases for it to be random chance
-  if(distance < minDistance){
-    turnLeftSlow();
-    waitUntilPulseCount(5);
-    stopRobot();
-
-    distance = getDistance();
-
-    if(distance < minDistance){
-      turnRightSlow();
-      waitUntilPulseCount(5);
-      stopRobot();
-    }//end if
-  }//end doublecheck for left
-  
-  if(distance > minDistance){
-    
-    Serial.println("HARD TO PORT");
-    turnLeft();
-    waitUntilPulseCount(16);
-    stopRobot();
-    
-  } else {
-
-    Serial.println("Nothing left");
-    sensorCenter();
-    delay(300);
-    distance = getDistance();
-
-    if(distance > 8){
-      //do nothing
-      Serial.println("Nothing left to do");
-    } else {
-
-      Serial.println("Nothing center");
-      sensorRight();
-      delay(300);
-      distance = getDistance();
-
-      if(distance > minDistance){
-        
-        Serial.println("RIGHT");
-        turnRight();
-        waitUntilPulseCount(15);
-        stopRobot();
-        
-      } else {
-        
-        Serial.println("BACKTRACK");
-        turnAround();
-        delay(100);
-        
-      }//end if right
-      
-    }//end if forward
-    
-  }//end if left
-
-  tooLeft();
-  tooRight();
-  
-}//end leftMaze
 
 void rightMaze(){
 
