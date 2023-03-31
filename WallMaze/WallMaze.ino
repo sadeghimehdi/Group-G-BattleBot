@@ -40,6 +40,8 @@ unsigned long PulseCountRight;
 
 // Timeout value looking for an encoder pulse
 const unsigned MaxPulseLength = 2000;
+const unsigned lineSensorDelay = 5000; //wait 5 seconds before starting line sensors during maze algorithm
+int mazeStartTime = 0;
 
 const int trigPinFront = 7; //pin for sending the sound
 const int echoPinFront = 8; //pin for receiving the sound
@@ -80,11 +82,10 @@ void loop() {
   if(!mazeComplete){
 
     if(checkDistance){
-      sensorCenter();
-      distance = getDistance();
-      if(distance < 30){
+      distanceFront = getDistanceFront();
+      if(distanceFront < 30){
         Serial.println("Robot detected");
-        delay(500);
+        delay(5000);
         checkDistance = false;
       }//end if
     }
@@ -98,7 +99,6 @@ void loop() {
     }//end startup
 
     if(inMaze){
-      gripperClose();
       rightMaze();
     }//end inmaze
 
@@ -120,246 +120,119 @@ void rightMaze(){
       return;
     }//end if
   }//end activate line sensors
-  
-  if(programStart){
-    sensorCenter();
-    delay(300);
-    distance = getDistance();
-  
-    if(distance > 8){
-      Serial.println("ONWARDS");
-      moveToWall();
-      stopRobot();
-    }//end if distance
 
-    activateLineSensors = true;
-    
-  }//end if programstart
+  if(!programStart){
+    int mazeStartTime = millis();
+  }
+
+  if(programStart && !activateLineSensors){
+    if (millis() - mazeStartTime >= lineSensorDelay){
+      activateLineSensors = true;
+    }
+  }//end programStart
 
   programStart = true;
 
-  sensorRight();
-  delay(600);
-  distance = getDistance();
+  distanceFront = getDistanceFront();
+  if(distanceFront < 8){
 
-  //double checks if the left distance is actually open
-  //too many special cases for it to be random chance
-  if(distance < minDistance){
-    turnRightSlow();
-    waitUntilPulseCount(5);
-    stopRobot();
-
-    distance = getDistance();
-
-    if(distance < minDistance){
-      turnLeftSlow();
-      waitUntilPulseCount(5);
+    distanceRight = getDistanceRight();
+    if(distanceRight > minDistance){
+      
+      turnRight();
+      waitUntilPulseCount(16);
+      moveForwards();
+      waitUntilPulseCount(30);
       stopRobot();
-    }//end if
-  }//end doublecheck for left
-  
-  if(distance > minDistance){
-    
-    Serial.println("HARD TO STARBOARD");
-    turnRight();
-    waitUntilPulseCount(16);
-    stopRobot();
+      
+    } else {
+
+      turnLeft();
+      waitUntilPulseCount(16);
+      stopRobot();
+      
+    }//end if else
     
   } else {
 
-    Serial.println("Nothing right");
-    sensorCenter();
-    delay(300);
-    distance = getDistance();
+    distanceRight = getDistanceRight();
+    if(distanceRight > minDistance){
 
-    if(distance > 8){
-      //do nothing
-      Serial.println("Nothing right to do");
-    } else {
-
-      Serial.println("Nothing center");
-      sensorLeft();
-      delay(300);
-      distance = getDistance();
-
-      if(distance > minDistance){
-        
-        Serial.println("LEFT");
-        turnLeft();
-        waitUntilPulseCount(16);
-        stopRobot();
-        
-      } else {
-        
-        Serial.println("BACKTRACK");
-        turnAround();
-        delay(100);
-        
-      }//end if left
+      moveForwards();
+      waitUntilPulseCount(20);
+      turnRight();
+      waitUntilPulseCount(16);
+      moveForwards();
+      waitUntilPulseCount(30);
+      stopRobot();
       
-    }//end if forward
-    
-  }//end if left
+    }//end if distance right
 
-  tooRight();
-  tooLeft();
+    moveForwards();
+    
+  }//end if 
+
+  adjustRobot();
   
 }//end rightMaze
 
-int getDistance(){
-  digitalWrite(trigPin, LOW); //clear the trig pin
+void adjustRobot(){
+  
+  distanceRight = getDistanceRight();
+  if(distanceRight < 4){
+    //get away from the wall
+    turnLeft();
+    waitUntilPulseCount(4);
+  } else if (distanceRight < 8) {
+    analogWrite(motorB1, 200);
+    analogWrite(motorA2, 200);
+  } else if (distanceRight < 12){
+    analogWrite(motorB1, 150);
+    analogWrite(motorA2, 200);
+  } else if (distanceRight < 20){
+    analogWrite(motorB1, 110);
+    analogWrite(motorA2, 250);
+  } else if (distanceRight < minDistance){
+    turnRight();
+    waitUntilPulseCount(4);
+  }//end adjustment
+  
+}
+
+int getDistanceFront(){
+  digitalWrite(trigPinFront, LOW); //clear the trig pin
   delay(2);
   
-  digitalWrite(trigPin, HIGH); //generate sound
+  digitalWrite(trigPinFront, HIGH); //generate sound
   delay(10); //generate sound for 10ms
-  digitalWrite(trigPin, LOW); //stop generating sound
+  digitalWrite(trigPinFront, LOW); //stop generating sound
 
-  duration = pulseIn(echoPin, HIGH); //reads how long until the echo pin received the sound. echo pin is set to high until it gets the sound, and then its low
-  distance = (duration * 0.034)/2; //distance calculation in CM, 
+  duration = pulseIn(echoPinFront, HIGH); //reads how long until the echo pin received the sound. echo pin is set to high until it gets the sound, and then its low
+  distanceFront = (duration * 0.034)/2; //distance calculation in CM, 
 
-  Serial.print("Distance: ");
-  Serial.println(distance);
+  Serial.print("Distance front: ");
+  Serial.println(distanceFront);
 
-  return distance;
+  return distanceFront;
 }//end getDistance
 
-void turnAround(){
-
-  sensorLeft();
-  delay(600);
-  distanceLeft = getDistance();
-
-  sensorRight();
-  delay(600);
-  distanceRight = getDistance();
+int getDistanceRight(){
+  digitalWrite(trigPinRight, LOW); //clear the trig pin
+  delay(2);
   
-  if(distanceLeft > distanceRight){
+  digitalWrite(trigPinRight, HIGH); //generate sound
+  delay(10); //generate sound for 10ms
+  digitalWrite(trigPinRight, LOW); //stop generating sound
 
-    moveLeftWheelBackwards();
-    waitUntilPulseCountLeft(40);
-    stopRobot();
-    
-    moveRightWheelForwards();
-    waitUntilPulseCountRight(30);
-    stopRobot();
-    
-  } else {
+  duration = pulseIn(echoPinRight, HIGH); //reads how long until the echo pin received the sound. echo pin is set to high until it gets the sound, and then its low
+  distanceRight = (duration * 0.034)/2; //distance calculation in CM, 
 
-    moveRightWheelBackwards();
-    waitUntilPulseCountRight(30);
-    stopRobot();
-    
-    moveLeftWheelForwards();
-    waitUntilPulseCountLeft(40);
-    stopRobot();
-    
-  }//end if
+  Serial.print("Distance right: ");
+  Serial.println(distanceRight);
 
-  moveForwards();
-  waitUntilPulseCount(20);
-  stopRobot();
-  
-}//end turnAround
+  return distanceRight;
+}//end getDistance
 
-void tooLeft(){
-
-  sensorLeft();
-  delay(600);
-  distanceLeft = getDistance();
-  
-  if (distanceLeft < 8){
-    turnRight();
-    waitUntilPulseCount(5);
-    stopRobot();
-  }
-  
-}
-
-void tooRight(){
-
-  sensorRight();
-  delay(600);
-  distanceRight = getDistance();
-  
-  if (distanceRight < 8){
-    turnLeft();
-    waitUntilPulseCount(5);
-    stopRobot();
-  }
-  
-}
-
-void moveToWall(){
-
-  sensorCenter();
-  delay(300);
-  distance = getDistance();
-  int lastDistance;
-  int counter = 0;
-  
-  if(distance < 40){
-
-    int previousPulseStateRight = digitalRead(pulsePinRight);
-    
-    while(distance > 8 && distance < 40){
-      
-    //code for counting pulses, if pulses are greater than 60, then stop the function because it's gone too far
-      
-      int pulseStateRight = digitalRead(pulsePinRight);
-  
-      if (pulseStateRight != previousPulseStateRight){
-        // State change
-        previousPulseStateRight = pulseStateRight;
-        PulseCountRight++;
-        
-      }//end if
-    
-      if(PulseCountRight > 60){
-        PulseCountRight = 0;
-        return;
-      }//end stop if too many pulses
-
-    //end code for wheel sensors
-      
-      lastDistance = distance;
-      moveForwards();
-      
-      distance = getDistance();
-      if(distance == lastDistance || distance == lastDistance+1){
-        counter++;
-        Serial.println(counter);
-        if(counter > 10){
-
-          moveBackwards();
-          delay(300);
-          stopRobot();
-
-          tooLeft();
-          tooRight();
-           
-          counter = 0;
-          
-          sensorCenter();
-          
-        }//end if
-      } else {
-        counter = 0;
-      }//end if else
-      delay(20);
-      
-    }//end while
-    
-    stopRobot();
-    
-  } else {
-    
-    moveForwards();
-    waitUntilPulseCount(50);
-    stopRobot();
-    
-  }//end if else
-  
-}//end movetowall
 
 void waitUntilPulseCount(unsigned long count){
   int previousPulseStateLeft = digitalRead(pulsePinLeft);
@@ -403,6 +276,8 @@ void waitUntilPulseCount(unsigned long count){
       // No pulse state change for a while.  Must have hit a stop
       moveBackwards();
       delay(300);
+      turnLeft();
+      waitUntilPulseCountLeft(4); 
       stopRobot();
       PulseCountRight = 0;
       PulseCountLeft = 0;
@@ -494,6 +369,8 @@ void moveForwards(){
   digitalWrite(motorB1, HIGH);
   digitalWrite(motorB2, LOW);
 
+  delay(10);
+
   analogWrite(motorA1, 0);
   analogWrite(motorA2, 200);
   analogWrite(motorB1, 200);
@@ -505,6 +382,8 @@ void moveBackwards(){
   digitalWrite(motorA2, LOW);
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, HIGH);
+
+  delay(10);
 
   analogWrite(motorA1, 200);
   analogWrite(motorA2, 0);
@@ -518,21 +397,11 @@ void turnLeft(){
   digitalWrite(motorB1, HIGH);
   digitalWrite(motorB2, LOW);
 
+  delay(10);
+
   analogWrite(motorA1, 200);
   analogWrite(motorA2, 0);
   analogWrite(motorB1, 200);
-  analogWrite(motorB2, 0);
-}
-
-void turnLeftSlow(){
-  digitalWrite(motorA1, HIGH);
-  digitalWrite(motorA2, LOW);
-  digitalWrite(motorB1, HIGH);
-  digitalWrite(motorB2, LOW);
-
-  analogWrite(motorA1, 150);
-  analogWrite(motorA2, 0);
-  analogWrite(motorB1, 150);
   analogWrite(motorB2, 0);
 }
 
@@ -542,52 +411,10 @@ void turnRight(){
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, HIGH);
 
-  analogWrite(motorA1, 0);
-  analogWrite(motorA2, 200);
-  analogWrite(motorB1, 0);
-  analogWrite(motorB2, 200);
-}
-
-void turnRightSlow(){
-  digitalWrite(motorA1, LOW);
-  digitalWrite(motorA2, HIGH);
-  digitalWrite(motorB1, LOW);
-  digitalWrite(motorB2, HIGH);
-
-  analogWrite(motorA1, 0);
-  analogWrite(motorA2, 150);
-  analogWrite(motorB1, 0);
-  analogWrite(motorB2, 150);
-}
-
-void moveLeftWheelForwards(){
-  digitalWrite(motorA1, LOW);
-  digitalWrite(motorA2, HIGH);
+  delay(10);
 
   analogWrite(motorA1, 0);
   analogWrite(motorA2, 200);
-}
-
-void moveLeftWheelBackwards(){
-  digitalWrite(motorA1, HIGH);
-  digitalWrite(motorA2, LOW);
-
-  analogWrite(motorA1, 200);
-  analogWrite(motorA2, 0);
-}
-
-void moveRightWheelForwards(){
-  digitalWrite(motorB1, HIGH);
-  digitalWrite(motorB2, LOW);
-
-  analogWrite(motorB1, 200);
-  analogWrite(motorB2, 0);
-}
-
-void moveRightWheelBackwards(){
-  digitalWrite(motorB1, LOW);
-  digitalWrite(motorB2, HIGH);
-
   analogWrite(motorB1, 0);
   analogWrite(motorB2, 200);
 }
@@ -608,36 +435,6 @@ void gripperClose(){
     delayMicroseconds(1050); // Duration of the pulse in microseconds
     digitalWrite(gripperPin, LOW);
     // Pulses duration: 1050 = fully closed
-    delay(20);
-  }
-}
-
-void sensorRight(){
-  for(int i = 0;i < 4; i++){
-    digitalWrite(rotatorPin, HIGH);
-    delayMicroseconds(350); // Duration of the pulse in microseconds
-    digitalWrite(rotatorPin, LOW);
-    //Pulse duration: 350ms = 0 degrees
-    delay(20);
-  }
-}
-
-void sensorLeft(){
-  for(int i = 0;i < 4; i++){
-    digitalWrite(rotatorPin, HIGH);
-    delayMicroseconds(2310); // Duration of the pulse in microseconds
-    digitalWrite(rotatorPin, LOW);
-    //Pulse duration: 2310ms - 180deg
-    delay(20);
-  }
-}
-
-void sensorCenter(){
-  for(int i = 0;i < 4; i++){
-    digitalWrite(rotatorPin, HIGH);
-    delayMicroseconds(1310); // Duration of the pulse in microseconds
-    digitalWrite(rotatorPin, LOW);
-    //Pulse duration: 1310ms = 90 degrees
     delay(20);
   }
 }
@@ -701,7 +498,7 @@ void startFollowingLine(){
   Serial.println(position);
 
   gripperOpen();
-  waitUntilPulseCount(20);
+  waitUntilPulseCount(10);
   
   //close gripper
   gripperClose();
