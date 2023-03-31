@@ -200,39 +200,24 @@ void setup()
  ***                          Line Sensor                                 ***
  ****************************************************************************/
   // configure the sensors
-  qtr.setTypeAnalog();
-  qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5, A6, A7}, sensorCount);
-
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, HIGH); // turn on Arduino's LED to indicate we are in calibration mode
-
-  // analogRead() takes about 0.1 ms on an AVR.
-  // 0.1 ms per sensor * 4 samples per sensor read (default) * 8 sensors
-  // * 10 reads per calibrate() call = ~32 ms per calibrate() call.
-  // Call calibrate() 15 times to make calibration take about 0,48 seconds.
-  Motor(255,255,0,0);
-
-  for (uint16_t i = 0; i < 15; i++){
-    qtr.calibrate();
-  }
-  
-  digitalWrite(LED_BUILTIN, LOW); // turn off Arduino's LED to indicate we are through with calibration
-
-  // print the calibration minimum values measured when emitters were on
-  Serial.begin(9600);
-  for (uint8_t i = 0; i < sensorCount; i++){
-    Serial.print(qtr.calibrationOn.minimum[i]);
-    Serial.print(' ');
-  } 
-  Serial.println();
-
-  // print the calibration maximum values measured when emitters were on
-  for (uint8_t i = 0; i < sensorCount; i++)  {
-    Serial.print(qtr.calibrationOn.maximum[i]);
-    Serial.print(' ');
-  }
-  Serial.println();
-  Serial.println();
+QTRSensors qtr;
+const uint8_t SensorCount = 8;
+uint16_t sensorValues[SensorCount];
+/****************************************************************************
+ ***                             Millis                                   ***
+ ****************************************************************************/
+unsigned long previousMillis_1 = 0;
+const long interval_1 = 5000; //interval for first event (5seconds)
+/****************************************************************************
+ ***                             Millis                                   ***
+ ****************************************************************************/
+const byte PulsePinRight = 4;  // Pin conneccted to encoder, for the right wheel
+const byte PulsePinLeft = 12; //Pin pulse for the left wheel 
+unsigned long PulseCountRight;
+unsigned long PulseCountLeft;
+unsigned long Midpoint;
+// Timeout value looking for an encoder pulse
+const unsigned MaxPulseLength = 1000;
 
 
 /****************************************************************************
@@ -367,17 +352,17 @@ void loop()
  ***                         Line folllowing                             ***
  ****************************************************************************/
   else if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600 && sensorValues[6] < 600 && sensorValues[7] < 600){
-    if(lastSensor < 4){
-      //Right turn
+  if(lastSensor < 4){
+//      Right turn
       Motor(0, 190, 190, 0);
       Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
-    }
-    else if (lastSensor > 3){
-      //Left turn
-      Motor(190, 0, 0, 190);
-      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
-    }
-  }  
+  }
+  else if (lastSensor > 3){
+//     Left turn
+     Motor(190, 0, 0, 190);
+     Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
+  }
+}
   
   else if (sensorValues[7] > 600 && sensorValues[6] < 600){
     Motor(200, 100, 0, 0);
@@ -385,7 +370,6 @@ void loop()
     lastSensor = 7;
     Serial.println("Last sensor is " + String(lastSensor));
   }
-  
   else if (sensorValues[7] > 600 && sensorValues[6] > 600){
     Motor(200, 110, 0, 0);
     Serial.print("Go hardish left");
@@ -394,40 +378,36 @@ void loop()
   }
   
   else if(sensorValues[6] > 600 && sensorValues[5] < 600){
-    Motor(200, 120, 0, 0);
-    Serial.println("Go left");
-    lastSensor = 6;
-    Serial.println("Last sensor is " + String(lastSensor));
+     Motor(200, 120, 0, 0);
+     Serial.println("Go left");
+     lastSensor = 6;
+     Serial.println("Last sensor is " + String(lastSensor));
   }
-  
   else if(sensorValues[6] > 600 && sensorValues[5] > 600){
-    Motor(200, 130, 0, 0);
-    Serial.println("Goish left");
-    lastSensor = 6;
-    Serial.println("Last sensor is " + String(lastSensor));
-  } 
+     Motor(200, 130, 0, 0);
+     Serial.println("Goish left");
+     lastSensor = 6;
+     Serial.println("Last sensor is " + String(lastSensor));
+  }
   
   else if(sensorValues[5] > 600 && sensorValues[4] < 600){
     Motor(200, 130, 0, 0);
     Serial.println("go leftish");
     lastSensor = 5;
     Serial.println("Last sensor is " + String(lastSensor));
-  }
-
-  else if(sensorValues[5] > 600 && sensorValues[4] > 600){
+    }
+      else if(sensorValues[5] > 600 && sensorValues[4] > 600){
     Motor(200, 140, 0, 0);
     Serial.println("go leftish"); 
     lastSensor = 5;
     Serial.println("Last sensor is " + String(lastSensor));
-  }
-
-  else if (sensorValues[0] > 600 && sensorValues[1] < 600){
-    Motor(100, 200, 0, 0);
-    Serial.println("Go hard right");
-    lastSensor = 0;
-    Serial.println("Last sensor is " + String(lastSensor));
-  }
-
+    }
+    else if (sensorValues[0] > 600 && sensorValues[1] < 600){
+      Motor(100, 200, 0, 0);
+      Serial.println("Go hard right");
+      lastSensor = 0;
+      Serial.println("Last sensor is " + String(lastSensor));
+    }
  else if(sensorValues[0] > 600 && sensorValues[1] > 600){
      Motor(110, 200, 0, 0);
      Serial.println("Go right");
@@ -436,37 +416,37 @@ void loop()
   }
     
   else if(sensorValues[1] > 600 && sensorValues[2] < 600){
-    Motor(120, 200, 0, 0);
-    Serial.println("Go right");
-    lastSensor = 1;
-    Serial.println("Last sensor is " + String(lastSensor));
+     Motor(120, 200, 0, 0);
+     Serial.println("Go right");
+     lastSensor = 1;
+     Serial.println("Last sensor is " + String(lastSensor));
   }
  
-  else if(sensorValues[1] > 600 && sensorValues[2] > 600){
+    else if(sensorValues[1] > 600 && sensorValues[2] > 600){
     Motor(120, 200, 0, 0);
     Serial.println("go rightish");
     lastSensor = 2;
     Serial.println("Last sensor is " + String(lastSensor));
   }
-
+  
   else if(sensorValues[2] > 600 && sensorValues[3] < 600){
     Motor(130, 200, 0, 0);
     Serial.println("go rightish");
     lastSensor = 2;
     Serial.println("Last sensor is " + String(lastSensor));
   }
-
   else if(sensorValues[2] > 600 && sensorValues[3] > 600){
     Motor(140, 200, 0, 0);
     Serial.println("go rightish");
     lastSensor = 2;
     Serial.println("Last sensor is " + String(lastSensor));
   }
-
   else if(sensorValues[3] > 600 && sensorValues[4] > 600){
-    Motor(250, 250, 0, 0);
+//    Forward();
+    Motor(170, 170, 0, 0);
     Serial.print("go forward");
-  } 
+  //  lastSensor = NULL;
+    } 
     
   else if(sensorValues[3] > 600 && sensorValues[4] < 600){
     Motor(170, 180, 0, 0);
@@ -478,7 +458,7 @@ void loop()
     Motor(180, 170, 0, 0);
     Serial.print("go forwardish");
     lastSensor = 4;
-  }
+    }
 
 //  if(cm < 20){
 //    if(currentMillisRight - previousMillis_1 >= interval_1){

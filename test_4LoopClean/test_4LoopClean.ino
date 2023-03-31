@@ -4,9 +4,8 @@
 Servo gripper; 
 const int gripperPin = 2;
 int gripperClosed = 0;
+int duhh = 0;
 int servoPos = 5;
-
-
 /****************************************************************************
  ***                          Line Sensor                                 ***
  ****************************************************************************/
@@ -31,38 +30,38 @@ int servoPos = 5;
 // last seen by sensor 5 before being lost.
 
 QTRSensors qtr;
-const uint8_t sensorCount = 8;
-//valatile needs to be checked
-volatile uint16_t sensorValues[sensorCount];
+const uint8_t SensorCount = 8;
+uint16_t sensorValues[SensorCount];
 
 
 /****************************************************************************
  ***                             Millis                                   ***
  ****************************************************************************/
 unsigned long previousMillis_1 = 0;
-const long interval_1 = 5000; //interval for first event (5seconds)
 
-unsigned long previousMillis_2 = 0;
-const long interval_2 = 10000; //interval for second event, which checks whether the robot is moving or not (5seconds)
+const long interval_1 = 5000; //interval for first event (5seconds)
 
 
 /****************************************************************************
  ***                             Millis                                   ***
  ****************************************************************************/
-const byte pulsePinRight = 4;  // Pin conneccted to encoder, for the right wheel
-const byte pulsePinLeft = 12; //Pin pulse for the left wheel 
 
-unsigned long pulseCountRight;
-unsigned long pulseCountLeft;
-unsigned long midPoint;
+const byte PulsePinRight = 4;  // Pin conneccted to encoder, for the right wheel
+const byte PulsePinLeft = 12; //Pin pulse for the left wheel 
+
+unsigned long PulseCountRight;
+unsigned long PulseCountLeft;
+unsigned long Midpoint;
 
 // Timeout value looking for an encoder pulse
-const unsigned maxPulseLength = 5000;
+const unsigned MaxPulseLength = 1000;
+
 
 
 /****************************************************************************
  ***                          Neo Pixels                                  ***
  ****************************************************************************/
+
 // Which pin on the Arduino is connected to the NeoPixels?
 #define NEOPIN        10 // On Trinket or Gemma, suggest changing this to 1
 
@@ -75,17 +74,16 @@ const unsigned maxPulseLength = 5000;
 // strandtest example for more information on possible values.
 Adafruit_NeoPixel pixels(NUMPIXELS, NEOPIN, NEO_GRB + NEO_KHZ800);
 
-
 /****************************************************************************
  ***                      Sonic Sensor(distance)                          ***
  ****************************************************************************/
 const int pingPin = 8; // Trigger Pin of Ultrasonic Sensor
 const int echoPin = 7; // Echo Pin of Ultrasonic Sensor
 
-
 /****************************************************************************
  ***                                Motor                                 ***
  ****************************************************************************/
+
 const int motorLeftBack = 5; 
 const int motorLeftForward = 6; 
 const int motorRightBack = 9; 
@@ -107,88 +105,88 @@ void Motor(int x1, int x2, int x3, int x4){
   Serial.print(x3);
   Serial.print("-");
   Serial.println(x4);
-  
+
   analogWrite(motorRightForward, x1);
-  analogWrite(motorLeftForward, x2);
-  analogWrite(motorRightBack, x3);
-  analogWrite(motorLeftBack, x4);    
-}
+   analogWrite(motorLeftForward, x2);
+   analogWrite(motorRightBack, x3);
+   analogWrite(motorLeftBack, x4);    
+  }
 
 void Right(){
-  analogWrite(motorRightForward, 0);
-  analogWrite(motorLeftForward, 255);
-  analogWrite(motorRightBack, 0);
-  analogWrite(motorLeftBack, 0);
-}
+   analogWrite(motorRightForward, 0);
+   analogWrite(motorLeftForward, 255);
+   analogWrite(motorRightBack, 0);
+   analogWrite(motorLeftBack, 0);
+  }
 
 void Left(){
-  analogWrite(motorRightForward, 255);
-  analogWrite(motorLeftForward, 0);
-  analogWrite(motorRightBack, 0);
-  analogWrite(motorLeftBack, 0);
-}
+   analogWrite(motorRightForward, 255);
+   analogWrite(motorLeftForward, 0);
+   analogWrite(motorRightBack, 0);
+   analogWrite(motorLeftBack, 0);
+  }
 
 void Forward(){
-  analogWrite(motorRightForward, 255);
-  analogWrite(motorLeftForward, 255);
-  analogWrite(motorRightBack, 0);
-  analogWrite(motorLeftBack, 0);
-}
-  
+   analogWrite(motorRightForward, 255);
+   analogWrite(motorLeftForward, 255);
+   analogWrite(motorRightBack, 0);
+   analogWrite(motorLeftBack, 0);
+  }
 void Backward(){
-  analogWrite(motorRightForward, 0);
-  analogWrite(motorLeftForward, 0);
-  analogWrite(motorRightBack, 255);
-  analogWrite(motorLeftBack, 255);
-}
+   analogWrite(motorRightForward, 0);
+   analogWrite(motorLeftForward, 0);
+   analogWrite(motorRightBack, 255);
+   analogWrite(motorLeftBack, 255);
+  }
 
 void Stop(){
-  analogWrite(motorRightForward, 0);
-  analogWrite(motorLeftForward, 0);
-  analogWrite(motorRightBack, 0);
-  analogWrite(motorLeftBack, 0);
-}
+   analogWrite(motorRightForward, 0);
+   analogWrite(motorLeftForward, 0);
+   analogWrite(motorRightBack, 0);
+   analogWrite(motorLeftBack, 0);
+  }
 
 
 /***************** NEOPIXELS *********************/
 void Neo(int x1, int x2, int x3, int x4){   //x1 is which neopixel, x2 is red, x3 is green, x4 is blue.
-  pixels.setPixelColor(x1, pixels.Color(x3, x2, x4));
-}
+   pixels.setPixelColor(x1, pixels.Color(x3, x2, x4));
+  }
 
 void neoBack(){
-  pixels.setPixelColor(0, pixels.Color(125, 125, 125));
-  pixels.setPixelColor(1, pixels.Color(125, 125, 125));
-  pixels.setPixelColor(2, pixels.Color(0, 125, 0));
-  pixels.setPixelColor(3, pixels.Color(0, 125, 0));
-  pixels.show(); 
-}
+   pixels.setPixelColor(0, pixels.Color(125, 125, 125));
+   pixels.setPixelColor(1, pixels.Color(125, 125, 125));
+   pixels.setPixelColor(2, pixels.Color(0, 125, 0));
+   pixels.setPixelColor(3, pixels.Color(0, 125, 0));
+   pixels.show(); 
+  }
 
 void neoForward(){
-  pixels.setPixelColor(0, pixels.Color(0, 125, 0));
-  pixels.setPixelColor(1, pixels.Color(0, 125, 0));
-  pixels.setPixelColor(2, pixels.Color(125, 125, 125));
-  pixels.setPixelColor(3, pixels.Color(125, 125, 125));
-  pixels.show(); 
+   pixels.setPixelColor(0, pixels.Color(0, 125, 0));
+   pixels.setPixelColor(1, pixels.Color(0, 125, 0));
+   pixels.setPixelColor(2, pixels.Color(125, 125, 125));
+   pixels.setPixelColor(3, pixels.Color(125, 125, 125));
+   pixels.show(); 
 }
 
 void neoRight(){
-  pixels.setPixelColor(1, pixels.Color(75, 255, 0));
-  pixels.setPixelColor(2, pixels.Color(75, 255, 0));
-  pixels.show(); 
-}
+   pixels.setPixelColor(1, pixels.Color(75, 255, 0));
+   pixels.setPixelColor(2, pixels.Color(75, 255, 0));
+   pixels.show(); 
+  }
 
 void neoLeft(){
-  pixels.setPixelColor(0, pixels.Color(75, 255, 0));
-  pixels.setPixelColor(3, pixels.Color(75, 255, 0));
-  pixels.show(); 
-}
-  
+   pixels.setPixelColor(0, pixels.Color(75, 255, 0));
+   pixels.setPixelColor(3, pixels.Color(75, 255, 0));
+   pixels.show(); 
+  }
+
+
 
 void setup()
 {
- pinMode(pulsePinRight, INPUT);
+ pinMode(PulsePinRight, INPUT);
 
- 
+
 /****************************************************************************
  ***                          Gripper                                     ***
  ****************************************************************************/
@@ -201,7 +199,7 @@ void setup()
  ****************************************************************************/
   // configure the sensors
   qtr.setTypeAnalog();
-  qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5, A6, A7}, sensorCount);
+  qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5, A6, A7}, SensorCount);
 
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH); // turn on Arduino's LED to indicate we are in calibration mode
@@ -215,25 +213,24 @@ void setup()
   for (uint16_t i = 0; i < 15; i++){
     qtr.calibrate();
   }
-  
+
   digitalWrite(LED_BUILTIN, LOW); // turn off Arduino's LED to indicate we are through with calibration
 
   // print the calibration minimum values measured when emitters were on
   Serial.begin(9600);
-  for (uint8_t i = 0; i < sensorCount; i++){
+  for (uint8_t i = 0; i < SensorCount; i++){
     Serial.print(qtr.calibrationOn.minimum[i]);
     Serial.print(' ');
-  } 
+  }
   Serial.println();
 
   // print the calibration maximum values measured when emitters were on
-  for (uint8_t i = 0; i < sensorCount; i++)  {
+  for (uint8_t i = 0; i < SensorCount; i++)  {
     Serial.print(qtr.calibrationOn.maximum[i]);
     Serial.print(' ');
   }
   Serial.println();
   Serial.println();
-
 
 /****************************************************************************
  ***                          Neo Pixels                                  ***
@@ -265,24 +262,30 @@ void loop()
   // reflectance and 1000 means minimum reflectance, followed by the line
   // position
   //The the data most on the right is the left sensor, and vice versa
-  for (uint8_t i = 0; i < sensorCount; i++){
+  for (uint8_t i = 0; i < SensorCount; i++){
     Serial.print(sensorValues[i]);
     Serial.print('\t');
   }
   Serial.println(position);
 
-  if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && sensorValues[3] > 600 && sensorValues[4] > 600 && sensorValues[5] > 600 && sensorValues[6] > 600 && sensorValues[7] > 600 && gripperClosed == 0){
-    Stop();
-    gripperClose();
-    gripperClosed = 1;
-    delay(200);
-    Forward();
-    delay(200);
-    Motor(250,0,0,250);
-    delay(300);
-  }
+//0 is the most right sensor
+//7 is the most left sensor
+
+if(sensorValues[0] > 600 && sensorValues[1] > 600 && sensorValues[2] > 600 && sensorValues[3] > 600 && sensorValues[4] > 600 && sensorValues[5] > 600 && sensorValues[6] > 600 && sensorValues[7] > 600 && gripperClosed == 0){
+  Stop();
+  //close gripper
+  gripperClose();
+  gripperClosed = 1;
+
+  delay(200);
+  Forward();
+  delay(200);
+  Motor(250,0,0,250);
+  delay(300);
+}
 
   int amount = 0;
+
   if(sensorValues[0] > 800){ amount = amount + 1;};
   if(sensorValues[1] > 800){ amount = amount + 1;};
   if(sensorValues[2] > 800){ amount = amount + 1;};
@@ -292,56 +295,59 @@ void loop()
   if(sensorValues[6] > 800){ amount = amount + 1;};
   if(sensorValues[7] > 800){ amount = amount + 1;};
   Serial.println("The amount is" + String(amount));
-  
+
 
 /****************************************************************************
  ***                      Sonic Sensor(distance)                          ***
  ****************************************************************************/
-  long duration, inches, cm;
-  pinMode(pingPin, OUTPUT);
-  digitalWrite(pingPin, LOW);
-  digitalWrite(pingPin, HIGH);
-  digitalWrite(pingPin, LOW);
-  pinMode(echoPin, INPUT);
-  duration = pulseIn(echoPin, HIGH);
-  inches = microsecondsToInches(duration);
-  cm = microsecondsToCentimeters(duration);
-  Serial.println();
+ long duration, inches, cm;
+   pinMode(pingPin, OUTPUT);
+   digitalWrite(pingPin, LOW);
+   digitalWrite(pingPin, HIGH);
+   digitalWrite(pingPin, LOW);
+   pinMode(echoPin, INPUT);
+   duration = pulseIn(echoPin, HIGH);
+   inches = microsecondsToInches(duration);
+   cm = microsecondsToCentimeters(duration);
+   Serial.println();
 
 
 /****************************************************************************
  ***                       Pulse and Stop & Drop                          ***
  ****************************************************************************/
-  unsigned long currentMillisRight = millis();
-  if(amount >= 6 && theEnd == 0){
-    if(currentMillisRight - previousMillis_1 >= interval_1){
-      pulseCountRight = 0;   
-      int previousPulseState = digitalRead(pulsePinRight);
-      unsigned long lastPulseTime = millis();
-      Motor(200,200,0,0);
-      
-      while (1){
-        Serial.println(pulseCountRight);
-        int pulseState = digitalRead(pulsePinRight);
-        
-        if (pulseState != previousPulseState){
-          // State change
-          previousPulseState = pulseState;
-          pulseCountRight++;
-          lastPulseTime = millis();
-        }
-        
-        if (pulseCountRight == 7){
-          //stop after a set amount of pulses
-          Serial.println("STOP AHHHH");
-          theEnd = 1;
-          return;
-        }
+unsigned long currentMillisRight = millis();
+if(amount == 8 && theEnd == 0){
+  if(currentMillisRight - previousMillis_1 >= interval_1){
+    PulseCountRight = 0;   
+    int previousPulseState = digitalRead(PulsePinRight);
+    unsigned long lastPulseTime = millis();
+    Motor(200,200,0,0);
+
+    while (1)
+    {
+      Serial.println(PulseCountRight);
+      int pulseState = digitalRead(PulsePinRight);
+
+      if (pulseState != previousPulseState)
+      {
+        // State change
+        previousPulseState = pulseState;
+        PulseCountRight++;
+        lastPulseTime = millis();
+      }
+
+      if (PulseCountRight == 7)
+      {
+        //stop after a set amount of pulses
+        Serial.println("STOP AHHHH");
+        theEnd = 1;
+        return;
       }
     }
   }
+}
 
-  if(theEnd == 1 && amount >= 6){
+if(theEnd == 1 && amount == 8){
     Backward();
     delay(400);
     Stop();
@@ -350,99 +356,88 @@ void loop()
     delay(500);
     Backward();
     delay(1000);
-    //gripperClosed = 0;  
+    gripperClosed = 0;  
     Stop();
-    delay(10000);
-    Right();
-    delay(500);
-    lastSensor = 2;
-    //delay(99999);
-  }
-  else if (theEnd == 1 && amount < 6){ 
-    theEnd = 0;
-  }
+    delay(99999);
+}else if (theEnd == 1 && amount < 8)
+{ 
+  theEnd = 0;
+}
 
 
 /****************************************************************************
  ***                         Line folllowing                             ***
  ****************************************************************************/
-  else if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600 && sensorValues[6] < 600 && sensorValues[7] < 600){
-    if(lastSensor < 4){
-      //Right turn
+ else if(sensorValues[0] < 600 && sensorValues[1] < 600 && sensorValues[2] < 600 && sensorValues[3] < 600 && sensorValues[4] < 600 && sensorValues[5] < 600 && sensorValues[6] < 600 && sensorValues[7] < 600){
+  if(lastSensor < 4){
+//      Right turn
       Motor(0, 190, 190, 0);
       Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO RRIGGHHTHTHTHT!!!!!!");
-    }
-    else if (lastSensor > 3){
-      //Left turn
-      Motor(190, 0, 0, 190);
-      Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
-    }
-  }  
-  
+  }
+  else if (lastSensor > 3){
+//     Left turn
+     Motor(190, 0, 0, 190);
+     Serial.print("AAHHHH WHERE IS IT !!!!!!!!!!!!!!!! GOO LEFFFTT!!!!");
+  }
+
+ }  
   else if (sensorValues[7] > 600 && sensorValues[6] < 600){
     Motor(200, 100, 0, 0);
     Serial.print("Go hard left");
     lastSensor = 7;
     Serial.println("Last sensor is " + String(lastSensor));
   }
-  
   else if (sensorValues[7] > 600 && sensorValues[6] > 600){
     Motor(200, 110, 0, 0);
     Serial.print("Go hardish left");
     lastSensor = 7;
     Serial.println("Last sensor is " + String(lastSensor));
   }
-  
   else if(sensorValues[6] > 600 && sensorValues[5] < 600){
-    Motor(200, 120, 0, 0);
-    Serial.println("Go left");
-    lastSensor = 6;
-    Serial.println("Last sensor is " + String(lastSensor));
+     Motor(200, 120, 0, 0);
+     Serial.println("Go left");
+     lastSensor = 6;
+     Serial.println("Last sensor is " + String(lastSensor));
   }
-  
   else if(sensorValues[6] > 600 && sensorValues[5] > 600){
-    Motor(200, 130, 0, 0);
-    Serial.println("Goish left");
-    lastSensor = 6;
-    Serial.println("Last sensor is " + String(lastSensor));
-  } 
-  
+     Motor(200, 130, 0, 0);
+     Serial.println("Goish left");
+     lastSensor = 6;
+     Serial.println("Last sensor is " + String(lastSensor));
+  }
   else if(sensorValues[5] > 600 && sensorValues[4] < 600){
     Motor(200, 130, 0, 0);
     Serial.println("go leftish");
     lastSensor = 5;
     Serial.println("Last sensor is " + String(lastSensor));
-  }
-
-  else if(sensorValues[5] > 600 && sensorValues[4] > 600){
-    Motor(200, 140, 0, 0);
-    Serial.println("go leftish"); 
-    lastSensor = 5;
-    Serial.println("Last sensor is " + String(lastSensor));
-  }
-
-  else if (sensorValues[0] > 600 && sensorValues[1] < 600){
-    Motor(100, 200, 0, 0);
-    Serial.println("Go hard right");
-    lastSensor = 0;
-    Serial.println("Last sensor is " + String(lastSensor));
-  }
-
- else if(sensorValues[0] > 600 && sensorValues[1] > 600){
+    }
+    else if(sensorValues[5] > 600 && sensorValues[4] > 600){
+     Motor(200, 140, 0, 0);
+     Serial.println("go leftish"); 
+     lastSensor = 5;
+     Serial.println("Last sensor is " + String(lastSensor));
+    }
+    else if (sensorValues[0] > 600 && sensorValues[1] < 600){
+      Motor(100, 200, 0, 0);
+      Serial.println("Go hard right");
+      lastSensor = 0;
+      Serial.println("Last sensor is " + String(lastSensor));
+    }
+    else if(sensorValues[0] > 600 && sensorValues[1] > 600){
      Motor(110, 200, 0, 0);
      Serial.println("Go right");
      lastSensor = 1;
      Serial.println("Last sensor is " + String(lastSensor));
+    }
+
+    else if(sensorValues[1] > 600 && sensorValues[2] < 600){
+     Motor(120, 200, 0, 0);
+     Serial.println("Go right");
+     lastSensor = 1;
+     Serial.println("Last sensor is " + String(lastSensor));
   }
-    
-  else if(sensorValues[1] > 600 && sensorValues[2] < 600){
-    Motor(120, 200, 0, 0);
-    Serial.println("Go right");
-    lastSensor = 1;
-    Serial.println("Last sensor is " + String(lastSensor));
-  }
- 
-  else if(sensorValues[1] > 600 && sensorValues[2] > 600){
+
+    else if(sensorValues[1] > 600 && sensorValues[2] > 600){
     Motor(120, 200, 0, 0);
     Serial.println("go rightish");
     lastSensor = 2;
@@ -458,132 +453,117 @@ void loop()
 
   else if(sensorValues[2] > 600 && sensorValues[3] > 600){
     Motor(140, 200, 0, 0);
+//Motor(170, 230, 0, 0);
     Serial.println("go rightish");
     lastSensor = 2;
     Serial.println("Last sensor is " + String(lastSensor));
   }
 
   else if(sensorValues[3] > 600 && sensorValues[4] > 600){
+//    Forward();
+//    Motor(170, 170, 0, 0);
     Motor(250, 250, 0, 0);
     Serial.print("go forward");
-  } 
-    
+//    lastSensor = NULL;
+    } 
+
   else if(sensorValues[3] > 600 && sensorValues[4] < 600){
     Motor(170, 180, 0, 0);
     Serial.print("go forwardish");
     lastSensor = 3;
   }
-  
+
   else if(sensorValues[4] > 600 && sensorValues[3] < 600){
     Motor(180, 170, 0, 0);
     Serial.print("go forwardish");
     lastSensor = 4;
-  }
-
-  if(cm < 20){
-    if(currentMillisRight - previousMillis_1 >= interval_1){
-      Motor(0,250,250,0);
-      delay(350);
-      Motor(255,170,0,0);
-      delay(2000);
     }
-  }
 
 
 
-//
-//if(cm < 20){
-//  if(currentMillisRight - previousMillis_1 >= interval_1){
-//    int previousPulseState = digitalRead(pulsePinRight);
-//    unsigned long lastPulseTime = millis();
-//     Motor(0,250,250,0);
-//     delay(350);
-//     pulseCountRight = 0;   
-//
-//   while (1){
-//       Motor(255,170,0,0);
-//      Serial.println(pulseCountRight);
-//      int pulseState = digitalRead(pulsePinRight);
-//      
-//      if (pulseState != previousPulseState){
-//        // State change
-//        previousPulseState = pulseState;
-//        pulseCountRight++;
-//        lastPulseTime = millis();
-//      }
-//      
-//      if (pulseCountRight == 100){
-//        //stop after a set amount of pulses
-//        Serial.println("STOP AHHHH");
-//        lastSensor = 2;
-//        return;
-//      }
-//    }
-//  }
-//
-//}
-
-//
-///****************************************************************************
-// ***                        if not move, push                             ***
-// ****************************************************************************/
-//
-//if(currentMillisRight - previousMillis_2 >= interval_1){
-//    int previousPulseState = digitalRead(pulsePinRight);
-//    unsigned long lastPulseTime = millis();
-//     pulseCountRight = 0;   
-//
-//    while (1){
-//      Serial.println(pulseCountRight);
-//      int pulseState = digitalRead(pulsePinRight);
-//      
-//      if (pulseState != previousPulseState){
-//        // State change
-//        previousPulseState = pulseState;
-//        pulseCountRight++;
-//        lastPulseTime = millis();
-//      }
-//
-//      if(millis() - lastPulseTime >= maxPulseLength){
-//        Motor(250,250,0,0);
-//        delay(100);  
-//        previousMillis_2 = currentMillisRight;
-//       
-//      } else {
-//        pulseCountRight = 0;
-//        previousMillis_2 = currentMillisRight;
-//        
-//        }
-//
-//
-//
-//    
-//    }
-//  }
-
+//replace these with the pulse sensor stuff EPICC
+if(cm < 25){
+Motor(0,250,250,0);
+delay(350);
+Motor(255,170,0,0);
+delay(2200);
+}
 
 /****************************************************************************
  ***                        Neo Pixels and Motors                         ***
  ****************************************************************************/
   pixels.clear(); // Set all pixel colors to 'off'
-}
 
+  // The first NeoPixel in a strand is #0, second is 1, all the way up
+  // to the count of pixels minus one.
+  // pixels.Color() takes GRB values, from 0,0,0 up to 255,255,255
+
+//  if(cm<=1){
+//     neoBack();
+//     Motor(0, 0, 210, 200);
+//     delay(1000);
+//     
+//     neoForward();
+//     Stop();
+//     delay(200);
+//   
+//     neoLeft();
+//     delay(200);
+//
+//     neoForward();
+//     Motor(175, 0, 0, 150);
+//     delay(200); 
+//
+//     neoLeft();
+//     delay(200);
+// 
+//     neoForward();
+//     delay(200);
+// 
+//     neoLeft();
+//     delay(200);
+//  
+//     neoForward();
+//     delay(200);
+// 
+//     neoLeft();
+//     delay(200);
+//
+//     neoForward();
+//     delay(200);
+//
+//     neoLeft();
+//     delay(200);
+//
+//     neoForward();
+//     delay(200);
+//  
+//     neoLeft();
+//     delay(200);
+//     
+//     neoForward();
+//  }else{
+//    neoForward();
+////    Motor(160, 150, 0, 0);
+//  }  
+}
 
 /****************************************************************************
  ***                      Sonic Sensor(distance                           ***
  ****************************************************************************/
+
 long microsecondsToInches(long microseconds) {
-  return microseconds / 74 / 2;
+   return microseconds / 74 / 2;
 }
 
 long microsecondsToCentimeters(long microseconds) {
-  return microseconds / 29 / 2;
+   return microseconds / 29 / 2;
 }
-
 
 /****************************************************************************
  ***                      Gripper                                         ***
  ****************************************************************************/
+
 void gripperOpen(){
   gripper.write(100);
 }
