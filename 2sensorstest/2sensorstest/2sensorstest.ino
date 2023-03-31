@@ -23,9 +23,6 @@ const int echoPinFront = 8; //pin for receiving the sound
 const int trigPinRight = 4; //pin for sending the sound
 const int echoPinRight = 9; //pin for receiving the sound
 
-boolean rightTurnMade = false;
-boolean leftTurnMade = false;
-
 long duration; //time the sound takes to travel
 long distanceFront; //distance in cm, will be calculated from the duration
 long distanceRight;
@@ -58,7 +55,12 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   
-  
+  rightMaze();
+
+}//end loop
+
+void rightMaze(){
+
   distanceFront = getDistanceFront();
 
   if(distanceFront < 8){
@@ -95,12 +97,18 @@ void loop() {
       waitUntilPulseCount(30);
       stopRobot();
       
-    }
+    }//end if distance right
 
     moveForwards();
     
-  }
+  }//end if 
 
+  adjustRobot();
+  
+}//end rightMaze
+
+void adjustRobot(){
+  
   distanceRight = getDistanceRight();
   if(distanceRight < 4){
     //get away from the wall
@@ -119,107 +127,7 @@ void loop() {
     turnRight();
     waitUntilPulseCount(4);
   }//end adjustment
-
-}//end loop
-
-void rightMaze(){
-
-  gripperClose();
-
-//  if(activateLineSensors){
-//    if(sensorValues[0] > 800 || sensorValues[1] > 800 || sensorValues[2] > 800 || sensorValues[3] > 800 || sensorValues[4] > 800 || sensorValues[5] > 800 || sensorValues[6] > 800 || sensorValues[7] > 800){
-//      while(counter
-//      inMaze = false;
-//      return;
-//    }//end if
-//  }//end activate line sensors
   
-    
-  distanceFront = getDistanceFront();
-
-  if(distanceFront > 8){
-    Serial.println("ONWARDS");
-    moveForwards();
-  }//end if distance
-
-  if(distanceRight < 4){
-    digitalWrite(motorB1, HIGH);
-    analogWrite(motorA2, 160);
-  } else if (distanceRight < 8) {
-    analogWrite(motorB1, 200);
-    analogWrite(motorA2, 200);
-  } else if (distanceRight < 12){
-    analogWrite(motorB1, 150);
-    analogWrite(motorA2, 200);
-  }//end else if
-
-  if(distanceRight > minDistance){
-    moveForwards();
-    waitUntilPulseCount(25);
-    turnRight();
-    waitUntilPulseCount(16);
-    moveForwards();
-    waitUntilPulseCount(30);
-    stopRobot();
-  }
-
-  //activateLineSensors = true;
-    
-  distanceRight = getDistanceRight();
-  
-  if(distanceRight > minDistance){
-    
-    Serial.println("HARD TO STARBOARD");
-
-    distanceFront = getDistanceFront();
-    if(distanceFront > 8 && distanceFront < 40){
-      moveToWall();
-    } else {
-      moveForwards();
-    }//end if else
-    
-  } else {
-
-    Serial.println("Nothing right");
-
-    if(distanceFront > minDistance){
-      //do nothing
-      Serial.println("Nothing right to do");
-    } else {
-
-      Serial.println("Nothing center");
-      
-      distanceFront = getDistanceFront();
-      distanceRight = getDistanceRight();
-
-      if(distanceFront < 8 && distanceRight < minDistance){
-        
-        Serial.println("LEFT");
-        turnLeft();
-        waitUntilPulseCount(16);
-        stopRobot();
-        
-      } else {
-        
-      }//end if left
-      
-    }//end if forward
-    
-  }//end if left
-  
-}//end rightMaze
-
-void adjustRobot(){
-  distanceRight = getDistanceRight();
-  if(distanceRight < 6){
-    analogWrite(motorB1, 255);
-  } else if (distanceRight < 8) {
-    analogWrite(motorB1, 200);
-  } else if (distanceRight < 15){
-    analogWrite(motorA2, 220);
-  } else {
-    analogWrite(motorA2, HIGH);
-  }//end else if
 }
 
 int getDistanceFront(){
@@ -256,19 +164,6 @@ int getDistanceRight(){
   return distanceRight;
 }//end getDistance
 
-void moveToWall(){
-  
-  moveForwards();
-
-  while(distanceFront > 8){
-      
-    distanceFront = getDistanceFront();
-      
-  }//end while
-
-  stopRobot();
-  
-}//end movetowall
 
 void waitUntilPulseCount(unsigned long count){
   int previousPulseStateLeft = digitalRead(pulsePinLeft);
