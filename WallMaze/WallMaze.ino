@@ -334,10 +334,12 @@ void waitUntilPulseCountLeft(unsigned long count){
       if (millis() - lastPulseTime >= MaxPulseLength){
         // No pulse state change for a while.  Must have hit a stop
         moveBackwards();
-        delay(300);
-        stopRobot();
-        PulseCountLeft = 0;
-        return;
+      delay(300);
+      turnLeft();
+      waitUntilPulseCountLeft(4); 
+      stopRobot();
+      PulseCountLeft = 0;
+      return;
       }
     }
     
@@ -365,6 +367,8 @@ void waitUntilPulseCountRight(unsigned long count){
         // No pulse state change for a while.  Must have hit a stop
         moveBackwards();
         delay(300);
+        turnLeft();
+        waitUntilPulseCountLeft(4); 
         stopRobot();
         PulseCountRight = 0;
         return;
@@ -532,21 +536,23 @@ void startFollowingLine(){
   Serial.println(position);
 
   gripperOpen();
-  waitUntilPulseCount(10);
+  waitUntilPulseCount(20);
   
   //close gripper
   gripperClose();
 
   moveForwards();
-  waitUntilPulseCount(20);
+  waitUntilPulseCount(10);
   turnLeft();
   waitUntilPulseCount(16);
   moveForwards();
-  waitUntilPulseCount(60);
+  waitUntilPulseCount(70);
   stopRobot();
   return;
   
 }//end startFollowingLine
+
+
 
 /****************************************************************************
  ***                        Line following code                           ***
@@ -601,7 +607,7 @@ if(amount == 8 && theEnd == 0){
     unsigned long lastPulseTime = millis();
     Motor(200,200,0,0);
     
-    while (PulseCountRight < 7)
+    while (PulseCountRight < 2)
     {
       Serial.println(PulseCountRight);
       int pulseState = digitalRead(pulsePinRight);
